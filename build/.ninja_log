@@ -1,0 +1,14 @@
+# ninja log v5
+2	41	7349436513215447	CMakeFiles/labyrinth.dir/main.c.obj	114dc7395f989ab3
+4	78	7348195105099976	core/utilities/CMakeFiles/utilities.dir/src/logging.c.obj	21f457a326b9998d
+103	183	7349437419705787	labyrinth.exe	779aed5c8ff30b35
+78	112	7348195105428999	core/utilities/utilities.lib	eff49497bf75b104
+1	108	7350688379008532	build.ninja	bebe54726b553ea1
+6	43	7348331466319809	core/random/CMakeFiles/random.dir/src/random.c.obj	b41973dc3a472e70
+43	80	7348331466644769	core/random/random.lib	ce59d6adefb306c3
+1	64	7348364955401328	core/utils/CMakeFiles/utils.dir/src/logging.c.obj	dec1b8e7c6ae7c8e
+64	98	7348364955702320	core/utils/utils.lib	44e4ad6c14454079
+2	70	7349437419012312	core/data_structures/CMakeFiles/data_structures.dir/src/list.c.obj	ee0f3f3cc306843a
+25	123	7349431262015647	core/data_structures/CMakeFiles/data_structures.dir/src/queue.c.obj	44a62ddfd9c13474
+27	127	7349431262015647	core/data_structures/CMakeFiles/data_structures.dir/src/stack.c.obj	56bf876aafcf7b4d
+71	103	7349437419295748	core/data_structures/data_structures.lib	b868e050c19eb8d5

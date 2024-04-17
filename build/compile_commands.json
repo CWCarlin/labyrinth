@@ -1,0 +1,38 @@
+[
+{
+  "directory": "D:/dev/labyrinth/build",
+  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/pkgs -ID:/dev/labyrinth/core/random/include -ID:/dev/labyrinth/core/utils/include -ID:/dev/labyrinth/core/data_structures/include -isystem D:/utilities/Vulkan/Include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o CMakeFiles\\labyrinth.dir\\main.c.obj -c D:\\dev\\labyrinth\\main.c",
+  "file": "D:\\dev\\labyrinth\\main.c",
+  "output": "CMakeFiles\\labyrinth.dir\\main.c.obj"
+},
+{
+  "directory": "D:/dev/labyrinth/build",
+  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/core/random/include -ID:/dev/labyrinth/core/random/src -ID:/dev/labyrinth/core/utils/include -isystem D:/utilities/Vulkan/Include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o core\\random\\CMakeFiles\\random.dir\\src\\random.c.obj -c D:\\dev\\labyrinth\\core\\random\\src\\random.c",
+  "file": "D:\\dev\\labyrinth\\core\\random\\src\\random.c",
+  "output": "core\\random\\CMakeFiles\\random.dir\\src\\random.c.obj"
+},
+{
+  "directory": "D:/dev/labyrinth/build",
+  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/core/utils/include -ID:/dev/labyrinth/core/utils/src -isystem D:/utilities/Vulkan/Include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o core\\utils\\CMakeFiles\\utils.dir\\src\\logging.c.obj -c D:\\dev\\labyrinth\\core\\utils\\src\\logging.c",
+  "file": "D:\\dev\\labyrinth\\core\\utils\\src\\logging.c",
+  "output": "core\\utils\\CMakeFiles\\utils.dir\\src\\logging.c.obj"
+},
+{
+  "directory": "D:/dev/labyrinth/build",
+  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/core/data_structures/include -ID:/dev/labyrinth/core/data_structures/src -ID:/dev/labyrinth/core/utils/include -isystem D:/utilities/Vulkan/Include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o core\\data_structures\\CMakeFiles\\data_structures.dir\\src\\list.c.obj -c D:\\dev\\labyrinth\\core\\data_structures\\src\\list.c",
+  "file": "D:\\dev\\labyrinth\\core\\data_structures\\src\\list.c",
+  "output": "core\\data_structures\\CMakeFiles\\data_structures.dir\\src\\list.c.obj"
+},
+{
+  "directory": "D:/dev/labyrinth/build",
+  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/core/data_structures/include -ID:/dev/labyrinth/core/data_structures/src -ID:/dev/labyrinth/core/utils/include -isystem D:/utilities/Vulkan/Include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o core\\data_structures\\CMakeFiles\\data_structures.dir\\src\\queue.c.obj -c D:\\dev\\labyrinth\\core\\data_structures\\src\\queue.c",
+  "file": "D:\\dev\\labyrinth\\core\\data_structures\\src\\queue.c",
+  "output": "core\\data_structures\\CMakeFiles\\data_structures.dir\\src\\queue.c.obj"
+},
+{
+  "directory": "D:/dev/labyrinth/build",
+  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/core/data_structures/include -ID:/dev/labyrinth/core/data_structures/src -ID:/dev/labyrinth/core/utils/include -isystem D:/utilities/Vulkan/Include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o core\\data_structures\\CMakeFiles\\data_structures.dir\\src\\stack.c.obj -c D:\\dev\\labyrinth\\core\\data_structures\\src\\stack.c",
+  "file": "D:\\dev\\labyrinth\\core\\data_structures\\src\\stack.c",
+  "output": "core\\data_structures\\CMakeFiles\\data_structures.dir\\src\\stack.c.obj"
+}
+]
