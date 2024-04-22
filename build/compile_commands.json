@@ -1,26 +1,22 @@
 [
 {
-  "directory": "D:/dev/labyrinth/build",
-  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/pkgs -ID:/dev/labyrinth/core/utility/include -ID:/dev/labyrinth/core/allocators/include -isystem D:/utilities/Vulkan/Include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -std=c99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o CMakeFiles\\labyrinth.dir\\main.c.obj -c D:\\dev\\labyrinth\\main.c",
-  "file": "D:\\dev\\labyrinth\\main.c",
-  "output": "CMakeFiles\\labyrinth.dir\\main.c.obj"
+  "directory": "/home/cwcarlin/dev/personal/labyrinth/build",
+  "command": "/usr/bin/clang-17 -I/home/cwcarlin/dev/personal/labyrinth/pkgs -I/home/cwcarlin/dev/personal/labyrinth/core/utility/include -I/home/cwcarlin/dev/personal/labyrinth/core/allocators/include -g -D LOGGING -std=c99 -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -std=gnu99 -o CMakeFiles/labyrinth.dir/main.c.o -c /home/cwcarlin/dev/personal/labyrinth/main.c",
+  "file": "/home/cwcarlin/dev/personal/labyrinth/main.c"
 },
 {
-  "directory": "D:/dev/labyrinth/build",
-  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/core/utility/include -ID:/dev/labyrinth/core/utility/src -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -std=c99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o core\\utility\\CMakeFiles\\utility.dir\\src\\logging.c.obj -c D:\\dev\\labyrinth\\core\\utility\\src\\logging.c",
-  "file": "D:\\dev\\labyrinth\\core\\utility\\src\\logging.c",
-  "output": "core\\utility\\CMakeFiles\\utility.dir\\src\\logging.c.obj"
+  "directory": "/home/cwcarlin/dev/personal/labyrinth/build",
+  "command": "/usr/bin/clang-17 -I/home/cwcarlin/dev/personal/labyrinth/core/utility/include -I/home/cwcarlin/dev/personal/labyrinth/core/utility/src -g -D LOGGING -std=c99 -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -std=gnu99 -o core/utility/CMakeFiles/utility.dir/src/logging.c.o -c /home/cwcarlin/dev/personal/labyrinth/core/utility/src/logging.c",
+  "file": "/home/cwcarlin/dev/personal/labyrinth/core/utility/src/logging.c"
 },
 {
-  "directory": "D:/dev/labyrinth/build",
-  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/core/allocators/include -ID:/dev/labyrinth/core/allocators/src -ID:/dev/labyrinth/core/utility/include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -std=c99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o core\\allocators\\CMakeFiles\\allocators.dir\\src\\block_alloc.c.obj -c D:\\dev\\labyrinth\\core\\allocators\\src\\block_alloc.c",
-  "file": "D:\\dev\\labyrinth\\core\\allocators\\src\\block_alloc.c",
-  "output": "core\\allocators\\CMakeFiles\\allocators.dir\\src\\block_alloc.c.obj"
+  "directory": "/home/cwcarlin/dev/personal/labyrinth/build",
+  "command": "/usr/bin/clang-17 -I/home/cwcarlin/dev/personal/labyrinth/core/allocators/include -I/home/cwcarlin/dev/personal/labyrinth/core/allocators/src -I/home/cwcarlin/dev/personal/labyrinth/core/utility/include -g -D LOGGING -std=c99 -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -std=gnu99 -o core/allocators/CMakeFiles/allocators.dir/src/block_alloc.c.o -c /home/cwcarlin/dev/personal/labyrinth/core/allocators/src/block_alloc.c",
+  "file": "/home/cwcarlin/dev/personal/labyrinth/core/allocators/src/block_alloc.c"
 },
 {
-  "directory": "D:/dev/labyrinth/build",
-  "command": "D:\\utilities\\VisualStudio\\IDE\\VC\\Tools\\Llvm\\x64\\bin\\clang.exe -ID:/dev/labyrinth/core/allocators/include -ID:/dev/labyrinth/core/allocators/src -ID:/dev/labyrinth/core/utility/include -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -std=gnu99 -std=c99 -D LOGGING -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -o core\\allocators\\CMakeFiles\\allocators.dir\\src\\linear_alloc.c.obj -c D:\\dev\\labyrinth\\core\\allocators\\src\\linear_alloc.c",
-  "file": "D:\\dev\\labyrinth\\core\\allocators\\src\\linear_alloc.c",
-  "output": "core\\allocators\\CMakeFiles\\allocators.dir\\src\\linear_alloc.c.obj"
+  "directory": "/home/cwcarlin/dev/personal/labyrinth/build",
+  "command": "/usr/bin/clang-17 -I/home/cwcarlin/dev/personal/labyrinth/core/allocators/include -I/home/cwcarlin/dev/personal/labyrinth/core/allocators/src -I/home/cwcarlin/dev/personal/labyrinth/core/utility/include -g -D LOGGING -std=c99 -Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token -std=gnu99 -o core/allocators/CMakeFiles/allocators.dir/src/linear_alloc.c.o -c /home/cwcarlin/dev/personal/labyrinth/core/allocators/src/linear_alloc.c",
+  "file": "/home/cwcarlin/dev/personal/labyrinth/core/allocators/src/linear_alloc.c"
 }
 ]

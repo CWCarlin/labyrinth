@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 
-
 u64 test[15];
 
 int main() {

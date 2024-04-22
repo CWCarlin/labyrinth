@@ -1,8 +1,8 @@
-# Install script for directory: D:/dev/labyrinth/core
+# Install script for directory: /home/cwcarlin/dev/personal/labyrinth/core
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/labyrinth")
+  set(CMAKE_INSTALL_PREFIX "/usr/local")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -27,6 +27,11 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   endif()
 endif()
 
+# Install shared libraries without execute permission?
+if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
+  set(CMAKE_INSTALL_SO_NO_EXE "1")
+endif()
+
 # Is this installation the result of a crosscompile?
 if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
@@ -34,13 +39,13 @@ endif()
 
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "D:/utilities/VisualStudio/IDE/VC/Tools/Llvm/x64/bin/llvm-objdump.exe")
+  set(CMAKE_OBJDUMP "/usr/bin/llvm-objdump-17")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("D:/dev/labyrinth/build/core/utility/cmake_install.cmake")
-  include("D:/dev/labyrinth/build/core/allocators/cmake_install.cmake")
+  include("/home/cwcarlin/dev/personal/labyrinth/build/core/utility/cmake_install.cmake")
+  include("/home/cwcarlin/dev/personal/labyrinth/build/core/allocators/cmake_install.cmake")
 
 endif()
 
