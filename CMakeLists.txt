@@ -12,6 +12,9 @@ if(WIN32)
 add_executable(labyrinth main.c pkgs/vma/vma_win.o)
 else()
 add_executable(labyrinth main.c pkgs/vma/vma_linux.o)
+target_link_libraries(${PROJECT_NAME}
+stdc++
+)
 endif()
 
 
@@ -21,9 +24,6 @@ PUBLIC
 )
 
 find_package(Vulkan REQUIRED)
-target_link_libraries(${PROJECT_NAME}
-Vulkan::Vulkan
-stdc++
-)
+target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
 
 add_subdirectory(core)
