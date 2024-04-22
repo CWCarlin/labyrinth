@@ -4,6 +4,7 @@ project(labyrinth VERSION 0.0.1 LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 cmake_policy(SET CMP0079 NEW)
 
+add_compile_options(-std=c99)
 add_compile_options(-D LOGGING)
 add_compile_options(-Wall -Wextra -Wpedantic -Wno-strict-prototypes -Wno-language-extension-token)
 

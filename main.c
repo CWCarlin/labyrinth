@@ -1,16 +1,33 @@
-#include "data_structures/list.h"
-#include "utils/types.h"
+#include "allocators/block_alloc.h"
+#include "utility/types.h"
 
 #include <stdio.h>
 
+
+u64 test[15];
+
 int main() {
-	LbrDataList l;
+	LbrBlockAllocator alloc;
+	lbrCreateBlockAllocator(&alloc, 16, 16);
 
-	lbrCreateDataList(16, &l);
-	lbrPushDataList(&l, (void*)0);
-	void* i = lbrPopIndexDataList(&l, 0);
+	for (int i = 0; i < 15; i++) {
+		void* p = lbrBlockAllocatorAllocate(&alloc);
+		printf("%d: %p\n", i, p);
+		test[i] = (u64)p;
+	}
 
-	// printf("%llu\n", (usize)i);
+	printf("\n");
+	lbrBlockAllocatorFree(&alloc, (void*)test[3]);
+	lbrBlockAllocatorFree(&alloc, (void*)test[7]);
+	lbrBlockAllocatorFree(&alloc, (void*)test[1]);
+	lbrBlockAllocatorFree(&alloc, (void*)test[0]);
 
-	return 0;
+	void* p = lbrBlockAllocatorAllocate(&alloc);
+	printf("%d: %p\n", 0, p);
+	p = lbrBlockAllocatorAllocate(&alloc);
+	printf("%d: %p\n", 1, p);
+	p = lbrBlockAllocatorAllocate(&alloc);
+	printf("%d: %p\n", 7, p);
+	p = lbrBlockAllocatorAllocate(&alloc);
+	printf("%d: %p\n", 3, p);
 }

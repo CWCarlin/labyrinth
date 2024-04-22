@@ -1,3 +1,2 @@
-add_subdirectory(random)
-add_subdirectory(utils)
-add_subdirectory(data_structures)
+add_subdirectory(utility)
+add_subdirectory(allocators)
