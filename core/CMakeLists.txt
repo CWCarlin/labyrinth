@@ -1,2 +1,3 @@
-add_subdirectory(utility)
 add_subdirectory(allocators)
+add_subdirectory(data_structures)
+add_subdirectory(utility)

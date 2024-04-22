@@ -44,8 +44,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/cwcarlin/dev/personal/labyrinth/build/core/utility/cmake_install.cmake")
   include("/home/cwcarlin/dev/personal/labyrinth/build/core/allocators/cmake_install.cmake")
+  include("/home/cwcarlin/dev/personal/labyrinth/build/core/data_structures/cmake_install.cmake")
+  include("/home/cwcarlin/dev/personal/labyrinth/build/core/utility/cmake_install.cmake")
 
 endif()
 
