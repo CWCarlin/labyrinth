@@ -15,5 +15,6 @@ PRIVATE
 
 target_link_libraries(data_structures
 	utility
+	allocators
 )
 target_link_libraries(${PROJECT_NAME} data_structures)

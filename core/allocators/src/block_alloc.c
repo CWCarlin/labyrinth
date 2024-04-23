@@ -25,6 +25,20 @@ void lbrDestroyBlockAllocator(LbrBlockAllocator* p_allocator) {
 	free(p_allocator->data);
 }
 
+LbrAllocInfo lbrBlockAllocatorGetAllocInfo(LbrBlockAllocator* p_allocator, usize bytes) {
+	if (p_allocator->block_size < bytes) {
+		LOG_ERROR("attempting to create alloc info with size larger than block allocator block size");
+	}
+
+	LbrAllocInfo alloc_info;
+	alloc_info.p_allocator = p_allocator;
+	alloc_info.allocate = (LbrAllocatorAllocFunc)&lbrBlockAllocatorAllocate;
+	alloc_info.free = (LbrAllocatorFreeFunc)&lbrBlockAllocatorFree;
+	alloc_info.bytes = bytes;
+
+	return alloc_info;
+}
+
 void* lbrBlockAllocatorAllocate(LbrBlockAllocator* p_allocator) {
 	if (p_allocator->next >= p_allocator->data + p_allocator->size || p_allocator->next < p_allocator->data) {
 		LOG_ERROR("attempting to allocate a block from a full block allocator");

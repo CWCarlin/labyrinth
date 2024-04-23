@@ -1,4 +1,5 @@
 add_library(allocators
+	src/alloc_info.c
 	src/block_alloc.c
 	src/linear_alloc.c
 )

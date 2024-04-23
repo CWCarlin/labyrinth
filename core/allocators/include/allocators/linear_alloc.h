@@ -1,3 +1,6 @@
+#pragma once
+
+#include "allocators/alloc_info.h"
 #include "utility/types.h"
 
 typedef struct lbr_linear_allocator_t {
@@ -8,5 +11,6 @@ typedef struct lbr_linear_allocator_t {
 
 void lbrCreateLinearAllocator(LbrLinearAllocator* p_allocator, usize bytes);
 void lbrDestroyLinearAllocator(LbrLinearAllocator* p_allocator);
+LbrAllocInfo lbrLinearAllocatorGetAllocInfo(LbrLinearAllocator* p_allocator, usize bytes);
 void* lbrLinearAllocatorAllocate(LbrLinearAllocator* p_allocator, usize bytes);
 void lbrLinearAllocatorClear(LbrLinearAllocator* p_allocator);
