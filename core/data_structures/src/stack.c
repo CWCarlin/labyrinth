@@ -20,10 +20,11 @@ void lbrDestroyStack(LbrStack* p_stack) {
 
 void lbrStackPush(LbrStack* p_stack, void* data) {
 	memcpy(p_stack->data + p_stack->top, data, p_stack->type_size);
+	p_stack->top += p_stack->type_size;
 }
 
-void* lbrStackPop(LbrStack* p_stack) {
-	
+void lbrStackPop(LbrStack* p_stack, void* data) {
+	memcpy(data, p_stack->data + p_stack->top - p_stack->type_size, p_stack->type_size);
 }
 
 void lbrStackClear(LbrStack* p_stack) {

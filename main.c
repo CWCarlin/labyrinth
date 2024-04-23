@@ -25,7 +25,8 @@ int main() {
 
 	lbrStackPush(&stack, &t);
 
-	test* p = (test*)stack.data;
-	printf("%lu %lu\n", p->one, p->two);
+	struct test p;
+	lbrStackPop(&stack, &p);
+	printf("%lu %lu\n", p.one, p.two);
 	return 0;
 }
