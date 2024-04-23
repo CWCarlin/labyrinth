@@ -7,13 +7,13 @@
 
 void lbrCreateLinearAllocator(LbrLinearAllocator* p_allocator, usize bytes) {
 	p_allocator->data = malloc(bytes);
-	p_allocator->size = bytes;
+	p_allocator->length = bytes;
 	p_allocator->top = 0;
 }
 
 void lbrDestroyLinearAllocator(LbrLinearAllocator* p_allocator) {
 	free(p_allocator->data);
-	p_allocator->size = 0;
+	p_allocator->length = 0;
 	p_allocator->top = 0;
 }
 
@@ -28,7 +28,7 @@ LbrAllocInfo lbrLinearAllocatorGetAllocInfo(LbrLinearAllocator* p_allocator, usi
 }
 
 void* lbrLinearAllocatorAllocate(LbrLinearAllocator* p_allocator, usize bytes) {
-	if (p_allocator->top + bytes >= p_allocator->size) {
+	if (p_allocator->top + bytes > p_allocator->length) {
 		LOG_ERROR("attempting to allocate more bytes than available from a linear allocator");
 	}
 	p_allocator->top += bytes;

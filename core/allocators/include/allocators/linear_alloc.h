@@ -5,7 +5,7 @@
 
 typedef struct lbr_linear_allocator_t {
 	u8* data;
-	usize size;
+	usize length;
 	usize top;
 } LbrLinearAllocator;
 

@@ -7,7 +7,7 @@ typedef struct lbr_block_allocator_t {
 	u8* data;
 	u8* next;
 	usize block_size;
-	usize size;
+	usize length;
 } LbrBlockAllocator;
 
 void lbrCreateBlockAllocator(LbrBlockAllocator* p_allocator, usize num_blocks, usize block_size);
