@@ -13,6 +13,6 @@ typedef struct lbr_stack_t {
 
 void lbrCreateStack(LbrStack* p_stack, usize capacity, usize type_size, LbrAllocCallback alloc_callback);
 void lbrDestroyStack(LbrStack* p_stack);
-void lbrStackPush(LbrStack* p_stack, void* data);
-void lbrStackPop(LbrStack* p_stack, void* data);
+void lbrStackPush(LbrStack* p_stack, void* p_data_in);
+void lbrStackPop(LbrStack* p_stack, void* p_data_out);
 void lbrStackClear(LbrStack* p_stack);

@@ -12,6 +12,7 @@ void lbrCreateQueue(LbrQueue* p_queue, usize capacity, usize type_size, LbrAlloc
 	p_queue->type_size = type_size;
 	p_queue->front = 0;
 	p_queue->back = 0;
+	p_queue->length = 0;
 }
 
 void lbrDestroyQueue(LbrQueue* p_queue) {
@@ -20,21 +21,28 @@ void lbrDestroyQueue(LbrQueue* p_queue) {
 	p_queue->type_size = 0;
 	p_queue->front = 0;
 	p_queue->back = 0;
+	p_queue->length = 0;
 }
 
-void lbrQueuePush(LbrQueue* p_queue, void* data) {
-	memcpy(p_queue->data + p_queue->back - p_queue->type_size, data, p_queue->type_size);
+void lbrQueuePush(LbrQueue* p_queue, void* p_data_in) {
+	if (p_queue->length >= p_queue->capacity / p_queue->type_size) {
+		LOG_ERROR("attempting to push data to full queue");
+	}
+	p_queue->length++;
+	memcpy(p_queue->data + p_queue->back, p_data_in, p_queue->type_size);
 	p_queue->back += p_queue->type_size;
-
 	if (p_queue->back >= p_queue->capacity) {
 		p_queue->back -= p_queue->capacity;
 	}
 }
 
-void lbrQueuePop(LbrQueue* p_queue, void* data) {
-	memcpy(data, p_queue->data + p_queue->front, p_queue->type_size);
+void lbrQueuePop(LbrQueue* p_queue, void* p_data_out) {
+	if (p_queue->length == 0) {
+		LOG_ERROR("attempting to pop data from an empty queue");
+	}
+	p_queue->length--;
+	memcpy(p_data_out, p_queue->data + p_queue->front, p_queue->type_size);
 	p_queue->front += p_queue->type_size;
-
 	if (p_queue->front >= p_queue->capacity) {
 		p_queue->front -= p_queue->capacity;
 	}
@@ -43,4 +51,5 @@ void lbrQueuePop(LbrQueue* p_queue, void* data) {
 void lbrQueueClear(LbrQueue* p_queue) {
 	p_queue->front = 0;
 	p_queue->back = 0;
+	p_queue->length = 0;
 }

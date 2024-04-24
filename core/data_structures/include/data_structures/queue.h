@@ -10,10 +10,11 @@ typedef struct lbr_queue_t {
     usize type_size;
     usize front;
     usize back;
+    usize length;
 } LbrQueue;
 
 void lbrCreateQueue(LbrQueue* p_queue, usize capacity, usize type_size, LbrAllocCallback alloc_callback);
 void lbrDestroyQueue(LbrQueue* p_queue);
-void lbrQueuePush(LbrQueue* p_queue, void* data);
-void lbrQueuePop(LbrQueue* p_queue, void* data);
+void lbrQueuePush(LbrQueue* p_queue, void* p_data_in);
+void lbrQueuePop(LbrQueue* p_queue, void* p_data_out);
 void lbrQueueClear(LbrQueue* p_queue);

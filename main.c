@@ -23,13 +23,16 @@ int main() {
 
 	for (int i = 0; i < 4; i++) {
 		test t = {i, i, i, i};
+		printf("%lu %lu %lu %lu\n", t.one, t.two, t.three, t.four);
 		lbrQueuePush(&queue, &t);
 	}
 
+	printf("%lu\n", queue.length);
+
+	test t;
 	for (int i = 0; i < 4; i++) {
-		test t;
 		lbrQueuePop(&queue, &t);
-		printf("%llu %llu %llu %llu\n", t.one, t.two, t.three, t.four);
+		printf("%lu %lu %lu %lu\n", t.one, t.two, t.three, t.four);
 	}
 
 	return 0;

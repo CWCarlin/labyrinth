@@ -20,11 +20,11 @@ void lbrDestroyStack(LbrStack* p_stack) {
 	p_stack->top = 0;
 }
 
-void lbrStackPush(LbrStack* p_stack, void* data) {
-	if (p_stack->top + p_stack->type_size > p_stack->capacity) {
+void lbrStackPush(LbrStack* p_stack, void* p_data_in) {
+	if (p_stack->top >= p_stack->capacity) {
 		LOG_ERROR("attempting to push data to a full stack");
 	}
-	memcpy(p_stack->data + p_stack->top, data, p_stack->type_size);
+	memcpy(p_stack->data + p_stack->top, p_data_in, p_stack->type_size);
 	p_stack->top += p_stack->type_size;
 }
 
