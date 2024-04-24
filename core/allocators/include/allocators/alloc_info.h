@@ -2,15 +2,14 @@
 
 #include "utility/types.h"
 
-typedef void* (*LbrAllocatorAllocFunc)(void* p_allocator, usize bytes);
-typedef void* (*LbrAllocatorFreeFunc)(void* p_allocator, void* block);
+typedef void* (*PFN_lbrAllocationFunc)(void* p_allocator, usize bytes);
+typedef void* (*PFN_lbrFreeFunc)(void* p_allocator, void* block);
 
-typedef struct lbr_alloc_info_t {
+typedef struct lbr_alloc_callback_t {
 	void* p_allocator;
-	LbrAllocatorAllocFunc allocate;
-	LbrAllocatorFreeFunc free;
-	usize bytes;
-} LbrAllocInfo;
+	PFN_lbrAllocationFunc pfn_allocate;
+	PFN_lbrFreeFunc pfn_free;
+} LbrAllocCallback;
 
-void* lbrAllocInfoAllocate(LbrAllocInfo* p_alloc_info);
-void lbrAllocInfoFree(LbrAllocInfo* p_alloc_info, void* block);
+void* lbrAllocCallbackAllocate(LbrAllocCallback* p_alloc_callback, usize bytes);
+void lbrAllocCallbackFree(LbrAllocCallback* p_alloc_callback, void* block);

@@ -1,6 +1,6 @@
 #include "allocators/alloc_info.h"
 #include "allocators/linear_alloc.h"
-#include "data_structures/stack.h"
+#include "data_structures/queue.h"
 
 #include <stdio.h>
 
@@ -14,19 +14,23 @@ typedef struct test {
 
 int main() {
 	LbrLinearAllocator alloc;
-	LbrAllocInfo info;
-	LbrStack stack;
+	LbrAllocCallback callback;
+	LbrQueue queue;
 
 	lbrCreateLinearAllocator(&alloc, 128);
-	info = lbrLinearAllocatorGetAllocInfo(&alloc, 128);
-	lbrCreateStack(&stack, 128, info);
+	callback = lbrLinearAllocatorGetAllocCallback(&alloc);
+	lbrCreateQueue(&queue, 128, 32, callback);
 
-	struct test t = {1, 2, 3, 4};
+	for (int i = 0; i < 4; i++) {
+		test t = {i, i, i, i};
+		lbrQueuePush(&queue, &t);
+	}
 
-	lbrStackPush(&stack, &t);
+	for (int i = 0; i < 4; i++) {
+		test t;
+		lbrQueuePop(&queue, &t);
+		printf("%llu %llu %llu %llu\n", t.one, t.two, t.three, t.four);
+	}
 
-	struct test p;
-	lbrStackPop(&stack, &p);
-	printf("%lu %lu\n", p.one, p.two);
 	return 0;
 }

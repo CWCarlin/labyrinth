@@ -4,14 +4,14 @@
 #include "utility/types.h"
 
 typedef struct lbr_stack_t {
-	LbrAllocInfo alloc_info;
+	LbrAllocCallback alloc_callback;
 	u8* data;
+	usize capacity;
 	usize type_size;
-	usize length;
 	usize top;
 } LbrStack;
 
-void lbrCreateStack(LbrStack* p_stack, usize type_size, LbrAllocInfo alloc_info);
+void lbrCreateStack(LbrStack* p_stack, usize capacity, usize type_size, LbrAllocCallback alloc_callback);
 void lbrDestroyStack(LbrStack* p_stack);
 void lbrStackPush(LbrStack* p_stack, void* data);
 void lbrStackPop(LbrStack* p_stack, void* data);

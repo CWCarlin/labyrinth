@@ -1,9 +1,9 @@
 #include "allocators/alloc_info.h"
 
-void* lbrAllocInfoAllocate(LbrAllocInfo* p_alloc_info) {
-	return p_alloc_info->allocate(p_alloc_info->p_allocator, p_alloc_info->bytes);
+void* lbrAllocCallbackAllocate(LbrAllocCallback* p_alloc_callback, usize bytes) {
+	return p_alloc_callback->pfn_allocate(p_alloc_callback->p_allocator, bytes);
 }
 
-void lbrAllocInfoFree(LbrAllocInfo* p_alloc_info, void* block) {
-	p_alloc_info->free(p_alloc_info->p_allocator, block);
+void lbrAllocCallbackFree(LbrAllocCallback* p_alloc_callback, void* block) {
+	p_alloc_callback->pfn_free(p_alloc_callback->p_allocator, block);
 }

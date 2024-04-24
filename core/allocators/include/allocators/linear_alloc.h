@@ -5,12 +5,12 @@
 
 typedef struct lbr_linear_allocator_t {
 	u8* data;
-	usize length;
+	usize capacity;
 	usize top;
 } LbrLinearAllocator;
 
 void lbrCreateLinearAllocator(LbrLinearAllocator* p_allocator, usize bytes);
 void lbrDestroyLinearAllocator(LbrLinearAllocator* p_allocator);
-LbrAllocInfo lbrLinearAllocatorGetAllocInfo(LbrLinearAllocator* p_allocator, usize bytes);
+LbrAllocCallback lbrLinearAllocatorGetAllocCallback(LbrLinearAllocator* p_allocator);
 void* lbrLinearAllocatorAllocate(LbrLinearAllocator* p_allocator, usize bytes);
 void lbrLinearAllocatorClear(LbrLinearAllocator* p_allocator);

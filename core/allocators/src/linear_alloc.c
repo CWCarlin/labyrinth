@@ -2,33 +2,33 @@
 
 #include <stdlib.h> // IWYU pragma: keep
 
+#include "allocators/alloc_info.h"
 #include "utility/logging.h"
 #include "utility/types.h"
 
 void lbrCreateLinearAllocator(LbrLinearAllocator* p_allocator, usize bytes) {
 	p_allocator->data = malloc(bytes);
-	p_allocator->length = bytes;
+	p_allocator->capacity = bytes;
 	p_allocator->top = 0;
 }
 
 void lbrDestroyLinearAllocator(LbrLinearAllocator* p_allocator) {
 	free(p_allocator->data);
-	p_allocator->length = 0;
+	p_allocator->capacity = 0;
 	p_allocator->top = 0;
 }
 
-LbrAllocInfo lbrLinearAllocatorGetAllocInfo(LbrLinearAllocator* p_allocator, usize bytes) {
-	LbrAllocInfo alloc_info;
-	alloc_info.p_allocator = p_allocator;
-	alloc_info.allocate = (LbrAllocatorAllocFunc)&lbrLinearAllocatorAllocate;
-	alloc_info.free = NULL;
-	alloc_info.bytes = bytes;
+LbrAllocCallback lbrLinearAllocatorGetAllocCallback(LbrLinearAllocator* p_allocator) {
+	LbrAllocCallback alloc_callback;
+	alloc_callback.p_allocator = p_allocator;
+	alloc_callback.pfn_allocate = (PFN_lbrAllocationFunc)&lbrLinearAllocatorAllocate;
+	alloc_callback.pfn_free = NULL;
 
-	return alloc_info;
+	return alloc_callback;
 }
 
 void* lbrLinearAllocatorAllocate(LbrLinearAllocator* p_allocator, usize bytes) {
-	if (p_allocator->top + bytes > p_allocator->length) {
+	if (p_allocator->top + bytes > p_allocator->capacity) {
 		LOG_ERROR("attempting to allocate more bytes than available from a linear allocator");
 	}
 	p_allocator->top += bytes;
