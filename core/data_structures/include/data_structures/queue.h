@@ -8,6 +8,7 @@ typedef struct lbr_queue_t {
     u8* data;
     usize capacity;
     usize type_size;
+    
     usize front;
     usize back;
     usize length;

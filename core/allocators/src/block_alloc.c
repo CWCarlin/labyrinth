@@ -29,7 +29,7 @@ void lbrDestroyBlockAllocator(LbrBlockAllocator* p_allocator) {
 	p_allocator->next = NULL;
 }
 
-LbrAllocCallback lbrBlockAllocatorGetAllocInfo(LbrBlockAllocator* p_allocator) {
+LbrAllocCallback lbrBlockAllocatorGetAllocCallback(LbrBlockAllocator* p_allocator) {
 	LbrAllocCallback alloc_callback;
 	alloc_callback.p_allocator = p_allocator;
 	alloc_callback.pfn_allocate = (PFN_lbrAllocationFunc)&lbrBlockAllocatorAllocate;

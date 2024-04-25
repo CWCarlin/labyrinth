@@ -8,6 +8,7 @@ typedef struct lbr_stack_t {
 	u8* data;
 	usize capacity;
 	usize type_size;
+	
 	usize top;
 } LbrStack;
 
