@@ -1,13 +1,14 @@
 #include "allocators/linear_alloc.h"
 
 #include <stdlib.h> // IWYU pragma: keep
+#include <vcruntime_string.h>
 
 #include "allocators/alloc_info.h"
 #include "utility/logging.h"
 #include "utility/types.h"
 
 void lbrCreateLinearAllocator(LbrLinearAllocator* p_allocator, usize bytes) {
-	p_allocator->data = malloc(bytes);
+	p_allocator->data = calloc(1, bytes);
 	p_allocator->capacity = bytes;
 	p_allocator->top = 0;
 }
@@ -36,5 +37,6 @@ void* lbrLinearAllocatorAllocate(LbrLinearAllocator* p_allocator, usize bytes) {
 }
 
 void lbrLinearAllocatorClear(LbrLinearAllocator* p_allocator) {
+	memset(p_allocator->data, 0, p_allocator->capacity);
 	p_allocator->top = 0;
 }

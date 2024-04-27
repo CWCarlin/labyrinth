@@ -10,18 +10,16 @@ void lbrCreateQueue(LbrQueue* p_queue, usize capacity, usize type_size, LbrAlloc
 	p_queue->data = lbrAllocCallbackAllocate(&alloc_callback, capacity);
 	p_queue->capacity = capacity;
 	p_queue->type_size = type_size;
-	p_queue->front = 0;
-	p_queue->back = 0;
-	p_queue->length = 0;
+	lbrQueueClear(p_queue);
 }
 
 void lbrDestroyQueue(LbrQueue* p_queue) {
 	lbrAllocCallbackFree(&p_queue->alloc_callback, p_queue->data);
 	p_queue->capacity = 0;
 	p_queue->type_size = 0;
+	p_queue->length = 0;
 	p_queue->front = 0;
 	p_queue->back = 0;
-	p_queue->length = 0;
 }
 
 void lbrQueuePush(LbrQueue* p_queue, void* p_data_in) {

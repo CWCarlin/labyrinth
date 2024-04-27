@@ -1,39 +1,31 @@
-#include "allocators/alloc_info.h"
-#include "allocators/linear_alloc.h"
-#include "data_structures/queue.h"
+#include "allocators/block_alloc.h"
 
 #include <stdio.h>
 
-typedef struct test {
-	u64 one;
-	u64 two;
-	u64 three;
-	u64 four;
-} test;
 
+void* t[5];
 
 int main() {
-	LbrLinearAllocator alloc;
-	LbrAllocCallback callback;
-	LbrQueue queue;
-
-	lbrCreateLinearAllocator(&alloc, 128);
-	callback = lbrLinearAllocatorGetAllocCallback(&alloc);
-	lbrCreateQueue(&queue, 128, 32, callback);
+	LbrBlockAllocator alloc;
+	lbrCreateBlockAllocator(&alloc, 16, 32);
 
 	for (int i = 0; i < 4; i++) {
-		test t = {i, i, i, i};
-		printf("%lu %lu %lu %lu\n", t.one, t.two, t.three, t.four);
-		lbrQueuePush(&queue, &t);
+		t[i] = lbrBlockAllocatorAllocate(&alloc);
+		printf("%d : %p\n", i, t[i]);
 	}
 
-	printf("%lu\n", queue.length);
+	lbrBlockAllocatorFree(&alloc, t[3]);
+	lbrBlockAllocatorFree(&alloc, t[1]);
 
-	test t;
-	for (int i = 0; i < 4; i++) {
-		lbrQueuePop(&queue, &t);
-		printf("%lu %lu %lu %lu\n", t.one, t.two, t.three, t.four);
-	}
+	void* one = lbrBlockAllocatorAllocate(&alloc);
+	void* two = lbrBlockAllocatorAllocate(&alloc);
+	void* three = lbrBlockAllocatorAllocate(&alloc);
+
+	printf("%p\n", t[0]);
+	printf("%p\n", t[2]);
+	printf("%p\n", one);
+	printf("%p\n", two);
+	printf("%p\n", three);
 
 	return 0;
 }

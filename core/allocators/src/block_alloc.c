@@ -8,16 +8,12 @@
 #include "utility/logging.h"
 #include "utility/types.h"
 
-typedef struct lbr_data_block_t {
-	struct lbr_data_block_t* next;
-} LbrDataBlock;
-
 void lbrCreateBlockAllocator(LbrBlockAllocator* p_allocator, usize num_blocks, usize block_size) {
 	if (block_size < 8) {
 		block_size = 8;
 	}
 	p_allocator->data = calloc(num_blocks, block_size);
-	p_allocator->next = p_allocator->data;
+	p_allocator->next = (u64*)p_allocator->data;
 	p_allocator->block_size = block_size;
 	p_allocator->capacity = num_blocks * block_size;
 }
@@ -39,27 +35,30 @@ LbrAllocCallback lbrBlockAllocatorGetAllocCallback(LbrBlockAllocator* p_allocato
 }
 
 void* lbrBlockAllocatorAllocate(LbrBlockAllocator* p_allocator) {
-	if (p_allocator->next >= p_allocator->data + p_allocator->capacity || p_allocator->next < p_allocator->data) {
+	if ((u8*)p_allocator->next >= p_allocator->data + p_allocator->capacity || p_allocator->next < (u64*)p_allocator->data) {
 		LOG_ERROR("attempting to allocate a block from a full block allocator");
 	}
-	LbrDataBlock* block = (void*)p_allocator->next;
-	p_allocator->next = (void*)block->next;
+
+	u64* block = (u64*)p_allocator->next;
+	p_allocator->next = (u64*)*p_allocator->next;
 	if (p_allocator->next == NULL) {
-		p_allocator->next = (u8*)block + p_allocator->block_size;
+		p_allocator->next = (u64*)((u8*)block + p_allocator->block_size);
 	}
 
-	return (void*)block;
+	return block;
 }
 
 void lbrBlockAllocatorFree(LbrBlockAllocator* p_allocator, void* block) {
 	if ((u8*)block >= p_allocator->data + p_allocator->capacity || (u8*)block < p_allocator->data) {
 		LOG_ERROR("attempting to free block not allocated from block allocator");
 	}
-	((LbrDataBlock*)block)->next = (LbrDataBlock*)p_allocator->next;
-	p_allocator->next = block;
+
+	u64* n = (u64*)block;
+	*n = (u64)p_allocator->next;
+	p_allocator->next = n;
 }
 
 void lbrBlockAllocatorClear(LbrBlockAllocator* p_allocator) {
 	memset(p_allocator->data, 0, p_allocator->capacity);
-	p_allocator->next = p_allocator->data;
+	p_allocator->next = (u64*)p_allocator->data;
 }

@@ -4,9 +4,8 @@
 #include "utility/types.h"
 
 typedef struct lbr_list_node_t {
-    u8* data;
-    struct lbr_list_node_t* next;
     struct lbr_list_node_t* prev;
+    struct lbr_list_node_t* next;
 } LbrListNode;
 
 typedef struct lbr_list_t {
@@ -14,17 +13,16 @@ typedef struct lbr_list_t {
     u8* data;
     usize capacity;
     usize type_size;
+    usize length;
 
-    LbrListNode* nodes;
     LbrListNode* head;
     LbrListNode* tail;
-    LbrListNode* next;
+    u64* next;
 } LbrList;
 
 void lbrCreateList(LbrList* p_list, usize capacity, usize type_size, LbrAllocCallback alloc_callback);
 void lbrDestroyList(LbrList* p_list);
-void lbrListPush(LbrList* p_list, void* p_data_in, usize idx);
 void lbrListPushBack(LbrList* p_list, void* p_data_in);
-void lbrListRemove(LbrList* p_list, usize idx);
-void* lbrListGet(LbrList* p_list, usize idx);
+void* lbrListAt(LbrList* p_list, usize idx);
+void lbrListRemove(LbrList* p_list, void* block);
 void lbrListClear(LbrList* p_list);

@@ -8,10 +8,10 @@ typedef struct lbr_queue_t {
     u8* data;
     usize capacity;
     usize type_size;
+    usize length;
     
     usize front;
     usize back;
-    usize length;
 } LbrQueue;
 
 void lbrCreateQueue(LbrQueue* p_queue, usize capacity, usize type_size, LbrAllocCallback alloc_callback);

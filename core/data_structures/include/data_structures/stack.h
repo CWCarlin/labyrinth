@@ -8,8 +8,7 @@ typedef struct lbr_stack_t {
 	u8* data;
 	usize capacity;
 	usize type_size;
-	
-	usize top;
+	usize length;
 } LbrStack;
 
 void lbrCreateStack(LbrStack* p_stack, usize capacity, usize type_size, LbrAllocCallback alloc_callback);
