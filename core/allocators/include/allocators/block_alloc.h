@@ -5,8 +5,8 @@
 
 typedef struct lbr_block_allocator_t {
 	u8* data;
+	usize bytes;
 	u64* next;
-	usize capacity;
 	usize block_size;
 } LbrBlockAllocator;
 

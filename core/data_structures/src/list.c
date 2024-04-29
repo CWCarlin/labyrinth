@@ -1,7 +1,6 @@
 #include "data_structures/list.h"
 
 #include <string.h>
-#include <stdio.h>
 
 #include "allocators/alloc_info.h"
 #include "utility/logging.h"
@@ -31,7 +30,7 @@ void lbrListPushBack(LbrList* p_list, void *p_data_in) {
     LbrListNode* node = (LbrListNode*)p_list->next;
     p_list->next = (u64*)*p_list->next;
     if (!p_list->next) {
-        p_list->next = (u64*)((u8*)node + sizeof(LbrListNode) + p_list->type_size);
+        p_list->next = (u64*)((u8*)(node + 1) + p_list->type_size);
     }
 
     if (!p_list->head) {
@@ -46,8 +45,7 @@ void lbrListPushBack(LbrList* p_list, void *p_data_in) {
         p_list->tail = node;
     }
 
-    memcpy((u8*)node+sizeof(LbrListNode), p_data_in, p_list->type_size);
-
+    memcpy(node + 1, p_data_in, p_list->type_size);
     p_list->length++;
 }
 
@@ -60,7 +58,7 @@ void* lbrListAt(LbrList* p_list, usize idx) {
         p = p->next;
     }
 
-    return (u8*)p + sizeof(LbrListNode);
+    return p + 1;
 }
 
 void lbrListRemove(LbrList* p_list, void* block) {

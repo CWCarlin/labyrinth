@@ -15,12 +15,12 @@ void lbrCreateBlockAllocator(LbrBlockAllocator* p_allocator, usize num_blocks, u
 	p_allocator->data = calloc(num_blocks, block_size);
 	p_allocator->next = (u64*)p_allocator->data;
 	p_allocator->block_size = block_size;
-	p_allocator->capacity = num_blocks * block_size;
+	p_allocator->bytes = num_blocks * block_size;
 }
 
 void lbrDestroyBlockAllocator(LbrBlockAllocator* p_allocator) {
 	free(p_allocator->data);
-	p_allocator->capacity = 0;
+	p_allocator->bytes = 0;
 	p_allocator->block_size = 0;
 	p_allocator->next = NULL;
 }
@@ -35,7 +35,7 @@ LbrAllocCallback lbrBlockAllocatorGetAllocCallback(LbrBlockAllocator* p_allocato
 }
 
 void* lbrBlockAllocatorAllocate(LbrBlockAllocator* p_allocator) {
-	if ((u8*)p_allocator->next >= p_allocator->data + p_allocator->capacity || p_allocator->next < (u64*)p_allocator->data) {
+	if ((u8*)p_allocator->next >= p_allocator->data + p_allocator->bytes || p_allocator->next < (u64*)p_allocator->data) {
 		LOG_ERROR("attempting to allocate a block from a full block allocator");
 	}
 
@@ -49,7 +49,7 @@ void* lbrBlockAllocatorAllocate(LbrBlockAllocator* p_allocator) {
 }
 
 void lbrBlockAllocatorFree(LbrBlockAllocator* p_allocator, void* block) {
-	if ((u8*)block >= p_allocator->data + p_allocator->capacity || (u8*)block < p_allocator->data) {
+	if ((u8*)block >= p_allocator->data + p_allocator->bytes || (u8*)block < p_allocator->data) {
 		LOG_ERROR("attempting to free block not allocated from block allocator");
 	}
 
@@ -59,6 +59,6 @@ void lbrBlockAllocatorFree(LbrBlockAllocator* p_allocator, void* block) {
 }
 
 void lbrBlockAllocatorClear(LbrBlockAllocator* p_allocator) {
-	memset(p_allocator->data, 0, p_allocator->capacity);
+	memset(p_allocator->data, 0, p_allocator->bytes);
 	p_allocator->next = (u64*)p_allocator->data;
 }
