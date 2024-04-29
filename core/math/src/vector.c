@@ -1,6 +1,5 @@
 #include "math/vector.h"
 
-#include <linux/limits.h>
 #include <math.h>
 
 void lbrVector3Add(const LbrVector3 *a, const LbrVector3 *b, LbrVector3 *out) {
