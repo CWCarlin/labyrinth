@@ -1,31 +1,21 @@
-#include "allocators/block_alloc.h"
+#include "math/vector.h"
 
+#include <math.h>
 #include <stdio.h>
 
-
-void* t[5];
-
 int main() {
-	LbrBlockAllocator alloc;
-	lbrCreateBlockAllocator(&alloc, 16, 32);
+	LbrVector3 a = {1, 0, 0};
+	LbrQuaternion q;
+	LbrVector3 c;
+	LbrVector3 v = {0, 1, 0};
+	lbrVector3Normalize(&v);
 
-	for (int i = 0; i < 4; i++) {
-		t[i] = lbrBlockAllocatorAllocate(&alloc);
-		printf("%d : %p\n", i, t[i]);
-	}
+	lbrQuaternionAxisAngle(&q, &v, M_PI / 3);
+	lbrVector3QuatRot(&a, &q, &c);
 
-	lbrBlockAllocatorFree(&alloc, t[3]);
-	lbrBlockAllocatorFree(&alloc, t[1]);
+	printf("%f %f %f\n", c.x, c.y, c.z);
 
-	void* one = lbrBlockAllocatorAllocate(&alloc);
-	void* two = lbrBlockAllocatorAllocate(&alloc);
-	void* three = lbrBlockAllocatorAllocate(&alloc);
-
-	printf("%p\n", t[0]);
-	printf("%p\n", t[2]);
-	printf("%p\n", one);
-	printf("%p\n", two);
-	printf("%p\n", three);
+	printf("%f\n", lbrVector3Norm(&c));
 
 	return 0;
 }

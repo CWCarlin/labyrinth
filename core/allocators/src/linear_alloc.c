@@ -1,7 +1,7 @@
 #include "allocators/linear_alloc.h"
 
 #include <stdlib.h> // IWYU pragma: keep
-#include <vcruntime_string.h>
+#include <string.h>
 
 #include "allocators/alloc_info.h"
 #include "utility/logging.h"

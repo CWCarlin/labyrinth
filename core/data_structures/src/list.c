@@ -2,7 +2,6 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <vcruntime_string.h>
 
 #include "allocators/alloc_info.h"
 #include "utility/logging.h"
