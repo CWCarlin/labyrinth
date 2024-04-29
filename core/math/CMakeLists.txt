@@ -10,8 +10,13 @@ PRIVATE
 )
 
 target_link_libraries(math
-    -lm
     utility
 )
+
+if (!WIN32)
+    target_link_libraries(math
+        -lm
+    )   
+endif()
 
 target_link_libraries(${PROJECT_NAME} math)
