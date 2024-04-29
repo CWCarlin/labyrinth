@@ -10,7 +10,7 @@ int main() {
 	LbrVector3 v = {0, 1, 0};
 	lbrVector3Normalize(&v);
 
-	lbrQuaternionAxisAngle(&q, &v, M_PI / 3);
+	lbrQuaternionAxisAngle(&q, &v, M_PI / 4);
 	lbrVector3QuatRot(&a, &q, &c);
 
 	printf("%f %f %f\n", c.x, c.y, c.z);

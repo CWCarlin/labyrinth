@@ -2,7 +2,6 @@
 
 #include <linux/limits.h>
 #include <math.h>
-#include <stdio.h>
 
 void lbrVector3Add(const LbrVector3 *a, const LbrVector3 *b, LbrVector3 *out) {
     out->x = a->x + b->x;
@@ -53,16 +52,6 @@ void lbrVector3Cross(const LbrVector3 *a, const LbrVector3 *b, LbrVector3 *out) 
     out->z = (a->x * b->y) - (a->y * b->x);
 }
 
-//   out.x = (1 - 2 * y * y - 2 * z * z) * v_x +
-//          (2 * x * y + 2 * w * z) * v_y +
-//          (2 * x * z - 2 * w * y) * v_z;
-//   out.y = (2 * x * y - 2 * w * z) * v_x +
-//          (1 - 2 * x * x - 2 * z * z) * v_y +
-//          (2 * y * z + 2 * w * x) * v_z;
-//   out.z = (2 * x * z + 2 * w * y) * v_x +
-//          (2 * y * z - 2 * w * x) * v_y +
-//          (1 - 2 * x * x - 2 * y * y) * v_z;
-
 void lbrVector3QuatRot(const LbrVector3 *a, const LbrQuaternion *q, LbrVector3 *out) {
     out->x = (1 - 2 * q->y * q->y - 2 * q->z * q->z) * a->x +
                 (2 * q->x * q->y + 2 * q->w * q->z) * a->y +
@@ -76,7 +65,6 @@ void lbrVector3QuatRot(const LbrVector3 *a, const LbrQuaternion *q, LbrVector3 *
                 (2 * q->y * q->z - 2 * q->w * q->x) * a->y +
                 (1 - 2 * q->x * q->x - 2 * q->y * q->y) * a->z;
 }
-
 
 void lbrQuaternionAxisAngle(LbrQuaternion* q, const LbrVector3* axis, f32 angle) {
     f32 half_sin = sin(angle / 2);
