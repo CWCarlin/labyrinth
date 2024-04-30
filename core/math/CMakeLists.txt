@@ -1,4 +1,5 @@
 add_library(math
+    src/quaternion.c
     src/vector.c
 )
 

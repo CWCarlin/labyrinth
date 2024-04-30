@@ -71,7 +71,7 @@ void lbrSetRemove(LbrSet* p_set, void *p_data) {
 }
 
 u8 lbrSetContains(LbrSet *p_set, void *p_data) {
-		usize idx = p_set->hash(p_data) % p_set->capacity;
+	usize idx = p_set->hash(p_data) % p_set->capacity;
 	while (!p_set->equals(p_data, p_set->data + (idx * p_set->type_size))) {
 		u8 open_block = 1;
 		for (usize i = 0; i < p_set->type_size; i++) {
