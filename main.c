@@ -6,13 +6,15 @@
 #include "data_structures/hash.h"
 #include "data_structures/map.h"
 
+__asm("int3");
+
 typedef struct {
   int one, two;
 } test;
 
-usize inthash(int* i) { return *i; }
+usize inthash(const int* num) { return *num; }
 
-u8 intequals(int* a, int* b) { return *a == *b; }
+u8 intequals(const int* one, const int* two) { return *one == *two; }
 
 int main() {
   LbrLinearAllocator alloc;
@@ -28,11 +30,11 @@ int main() {
 
   lbrMapInsert(&map, &i, &t);
 
-  printf("%llu\n", map.length);
+  printf("%lu\n", map.length);
 
   i = 1;
   test t_2 = *(test*)lbrMapGetValue(&map, &i);
-  printf("%d %d\n", t_2, t_2.two);
+  printf("%d %d\n", t_2.one, t_2.two);
 
   return 0;
 }
