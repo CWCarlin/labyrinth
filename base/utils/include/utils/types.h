@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdint.h> // IWYU pragma: keep
 #include <stddef.h>
+#include <stdint.h>
 
 // unsigned integers
 typedef uint8_t u8;

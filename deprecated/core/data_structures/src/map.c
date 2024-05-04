@@ -98,7 +98,7 @@ void lbrMapRemove(LbrMap* p_map, void* p_key) {
   }
 
   if (p_map->equals(p_key, p_map->data + (idx * p_map->key_size))) {
-    memset(p_map->data + (idx * p_map->key_size), 0, p_map->key_size);
+    memcpy(p_map->data + (idx * p_map->key_size), 0, p_map->key_size);
     memset(p_map->data + (p_map->capacity * p_map->key_size) +
                (idx * p_map->value_size),
            0, p_map->value_size);
