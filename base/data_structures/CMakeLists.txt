@@ -7,14 +7,15 @@ add_library(data_structures
 )
 
 target_include_directories(data_structures
-PUBLIC
+	PUBLIC
 	include
-PRIVATE
+	PRIVATE
 	src
 )
 
 target_link_libraries(data_structures
-	utility
+	utils
 	allocators
 )
+
 target_link_libraries(${PROJECT_NAME} data_structures)

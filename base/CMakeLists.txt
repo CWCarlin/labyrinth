@@ -1,2 +1,4 @@
+add_subdirectory(allocators)
+add_subdirectory(data_structures)
 add_subdirectory(math)
 add_subdirectory(utils)

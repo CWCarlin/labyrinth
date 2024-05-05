@@ -3,6 +3,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define LBR_NOP                     __asm("nop")
+#define LBR_ALIGN(bytes, alignment) (bytes = (bytes + alignment - 1) & ~(alignment - 1))
+
 // unsigned integers
 typedef uint8_t u8;
 typedef uint16_t u16;
@@ -21,3 +24,5 @@ typedef __int128_t i128;
 // floating points
 typedef float f32;
 typedef double f64;
+
+void* LbrNOP();

@@ -10,5 +10,8 @@ Checks: >
   portability-*,
   readability-*,
   llvm-*,
-
-  -readability-identifier-length
+  
+  -readability-identifier-length,
+  -bugprone-easily-swappable-parameters,
+  -readability-magic-numbers
+  

@@ -11,6 +11,5 @@ add_compile_options(-std=c99 -Werror -Wall -Wformat -Wextra -Wpedantic -Wno-stri
 add_executable(Labyrinth main.c)
 
 find_package(Vulkan REQUIRED)
-target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)
 
 add_subdirectory(base)

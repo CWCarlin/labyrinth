@@ -1,12 +1,13 @@
 add_library(utils
 	src/logging.c
+	src/types.c
 )
 
 target_include_directories(utils
 	PUBLIC
 	include
-	PRIVATE
 	${Vulkan_INCLUDE_DIRS}
+	PRIVATE
 	src
 )
 
