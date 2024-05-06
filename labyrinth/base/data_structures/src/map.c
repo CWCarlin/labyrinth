@@ -6,7 +6,8 @@
 #include "utils/logging.h"
 
 static usize lbrMapFind(LbrMap* p_map, void* p_key) {
-  usize idx = p_map->hash_func(p_key) % p_map->capacity;
+  usize idx      = p_map->hash_func(p_key) % p_map->capacity;
+  usize base_idx = idx;
   while (!p_map->equality_func(p_key, p_map->data + (idx * p_map->key_size))) {
     u8 open_block = 1;
     for (usize i = 0; i < p_map->key_size; i++) {
@@ -21,6 +22,9 @@ static usize lbrMapFind(LbrMap* p_map, void* p_key) {
     }
 
     idx = (idx + 1) % p_map->capacity;
+    if (idx == base_idx) {
+      break;
+    }
   }
 
   return idx;

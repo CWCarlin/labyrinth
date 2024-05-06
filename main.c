@@ -1,51 +1,39 @@
+#include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "allocators/block_alloc.h"
-#include "data_structures/list.h"
-#include "utils/types.h"
+#include "fabric/fabric.h"
+#include "fabric/fiber.h"
+#include "fabric/lock.h"
+
+LbrSpinLock lock = {100};
+
+void test(usize* i) {
+  *i = pthread_self();
+  lbrSpinLockDecrement(&lock);
+
+  lbrFabricReturn();
+}
 
 int main() {
-  LbrBlockAllocator alloc;
-  LbrBlockAllocatorCreateInfo alloc_info;
-  alloc_info.block_size = sizeof(int) * 200;
-  alloc_info.num_blocks = 16;
-  alloc_info.alignment  = sizeof(int);
-  lbrCreateBlockAllocator(&alloc_info, &alloc);
+  lbrInitializeFabric();
 
-  LbrList list;
-  LbrListCreateInfo list_info;
-  list_info.alloc_callbacks = alloc.lbr_callbacks;
-  list_info.capacity        = 32;
-  list_info.type_size       = sizeof(int);
+  LbrTask tasks[100];
+  usize izes[100];
 
-  lbrCreateList(&list_info, &list);
-
-  for (int i = 0; i < 10; i++) {
-    lbrListPushBack(&list, &i);
+  for (int i = 0; i < 100; i++) {
+    tasks[i].pfn_entry_point = (PFN_lbrFiberEntryFunction)test;
+    tasks[i].p_data_in       = &izes[i];
   }
 
-  int* j[16];
-  for (usize i = 0; i < 10; i++) {
-    j[i] = (int*)lbrListAt(&list, i);
-    printf("%d ", *j[i]);
-  }
-  printf("\n");
-  lbrListRemove(&list, j[3]);
-  lbrListRemove(&list, j[8]);
+  lbrFabricQueueTasks(tasks, 100, HIGH);
 
-  for (usize i = 0; i < 8; i++) {
-    printf("%d ", *(int*)lbrListAt(&list, i));
-  }
-  printf("\n");
-
-  int t = 3;
-  lbrListPushBack(&list, &t);
-
-  for (usize i = 0; i < 9; i++) {
-    printf("%d ", *(int*)lbrListAt(&list, i));
+  while (lock.acquired) {
   }
 
-  lbrDestroyList(&list);
+  for (int i = 0; i < 100; i++) {
+    printf("%d ", izes[i]);
+  }
 
   return 0;
 }

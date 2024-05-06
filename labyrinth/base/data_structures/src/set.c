@@ -6,7 +6,8 @@
 #include "utils/logging.h"
 
 static usize lbrSetFind(LbrSet* p_set, void* p_key) {
-  usize idx = p_set->hash_func(p_key) % p_set->capacity;
+  usize idx      = p_set->hash_func(p_key) % p_set->capacity;
+  usize base_idx = idx;
   while (!p_set->equality_func(p_key, p_set->data + (idx * p_set->key_size))) {
     u8 open_block = 1;
     for (usize i = 0; i < p_set->key_size; i++) {
@@ -21,6 +22,9 @@ static usize lbrSetFind(LbrSet* p_set, void* p_key) {
     }
 
     idx = (idx + 1) % p_set->capacity;
+    if (idx == base_idx) {
+      break;
+    }
   }
 
   return idx;
