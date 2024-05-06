@@ -7,6 +7,7 @@
 #define LBR_ALIGN(bytes, alignment) (bytes = (bytes + alignment - 1) & ~(alignment - 1))
 
 // unsigned integers
+typedef uintptr_t uptr;
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;

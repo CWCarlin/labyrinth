@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "allocators/block_alloc.h"
 #include "allocators/linear_alloc.h"
@@ -10,10 +11,11 @@
 #include "data_structures/queue.h"
 #include "fabric/fiber.h"
 #include "fabric/lock.h"
+#include "utils/types.h"
 
 #define NUM_FIBERS        100
 #define FIBER_STACK_SIZE  16384
-#define FIBER_STACK_ALIGN 64
+#define FIBER_STACK_ALIGN 16
 
 #define LINEAR_ALLOCATOR_PADDING 4096
 
@@ -22,32 +24,37 @@
 LbrBlockAllocator fiber_block_alloc;
 LbrLinearAllocator task_storage_alloc;
 
+// the way that these are stored needs to be rethought
+// each fiber should have an associated id that a thread
+// can do a linear search for when it needs to switch context
 pthread_t* fabric_threads;
 LbrFiber* running_fibers;
 
+// THESE SHOULD HOLD POINTERS TO FIBERS
 LbrList locked_fibers;
-LbrSpinLock locked_fibers_lock = {0};
+LbrSpinLock locked_fibers_lock;
 
 LbrQueue open_fibers;
-LbrSpinLock open_fibers_lock = {0};
+LbrSpinLock open_fibers_lock;
 
 LbrQueue low_priority_tasks;
-LbrSpinLock low_priority_tasks_lock = {0};
+LbrSpinLock low_priority_tasks_lock;
 
 LbrQueue medium_priority_tasks;
-LbrSpinLock medium_priority_tasks_lock = {0};
+LbrSpinLock medium_priority_tasks_lock;
 
 LbrQueue high_priority_tasks;
-LbrSpinLock high_priority_tasks_lock = {0};
+LbrSpinLock high_priority_tasks_lock;
 
-#ifdef _WIN32
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include <sysinfoapi.h>
 usize lbrFabricGetThreadCount() {
   SYSTEM_INFO sysinfo;
   GetSystemInfo(&sysinfo);
   return sysinfo.dwNumberOfProcessors;
 }
-#elif
+#elif defined(__unix__) || defined(__unix) || defined(__linux__)
+#include <unistd.h>
 usize lbrFabricGetThreadCount() { return sysconf(_SC_NPROCESSORS_ONLN); }
 #endif
 
@@ -67,8 +74,8 @@ static void lbrFabricFiberRuntime() {
           lbrQueuePush(&open_fibers, &running_fibers[pthread_self() - 1]);
           lbrSpinLockRelease(&open_fibers_lock);
 
-          fiber.context.rip = (void*)task.pfn_entry_point;
-          fiber.context.rcx = task.p_data_in;
+          fiber.context.rip = (uptr*)task.pfn_entry_point;
+          fiber.context.rdi = task.p_data_in;
           lbrFiberSwap(&running_fibers[pthread_self() - 1], &fiber);
         }
       }
@@ -77,8 +84,8 @@ static void lbrFabricFiberRuntime() {
 }
 
 static void* lbrFabricThreadInitialize() {
-  LbrFiber* fiber = &running_fibers[pthread_self() - 1];
-  lbrFiberConvertThread(fiber);
+  //LbrFiber* fiber = &running_fibers[pthread_self() - 1];
+  //lbrFiberConvertThread(fiber);
 
   lbrFabricFiberRuntime();
 
@@ -153,15 +160,15 @@ void lbrFabricQueueTasks(LbrTask* p_tasks, usize num_tasks, LbrTaskPriority prio
   LbrQueue* task_queue;
   LbrSpinLock* queue_lock;
   switch (priority) {
-    case LOW:
+    case LOW_PRIORITY:
       task_queue = &low_priority_tasks;
       queue_lock = &low_priority_tasks_lock;
       break;
-    case MEDIUM:
+    case MEDIUM_PRIORITY:
       task_queue = &medium_priority_tasks;
       queue_lock = &medium_priority_tasks_lock;
       break;
-    case HIGH:
+    case HIGH_PRIORITY:
       task_queue = &high_priority_tasks;
       queue_lock = &high_priority_tasks_lock;
       break;

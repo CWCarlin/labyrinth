@@ -5,9 +5,21 @@
 
 typedef void (*PFN_lbrFiberEntryFunction)(void*);
 
+typedef enum lbr_task_priority_e {
+  LOW_PRIORITY,
+  MEDIUM_PRIORITY,
+  HIGH_PRIORITY,
+} LbrTaskPriority;
+
+typedef struct lbr_task_t {
+  PFN_lbrFiberEntryFunction pfn_entry_point;
+  void* p_data_in;
+} LbrTask;
+
 typedef struct lbr_fiber_context_t LbrFiberContext;
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+
 struct lbr_fiber_context_t {
   void* rip;  // instruction pointer
   void* rsp;  // stack pointer
@@ -26,16 +38,17 @@ struct lbr_fiber_context_t {
 };
 
 #elif defined(__unix__) || defined(__unix) || defined(__linux__)
+
 struct lbr_fiber_context_t {
   void* rip;  // instruction pointer
   void* rsp;  // stack pointer
+  void* rbp;  // stack frame pointer
 
-  // input argument
-  void* rdi;
+  // input arguments
+  void *rdi, *rsi, *rdx, *rcx;
 
   // general use x64 registers
-  void *r12, *r13, *r14, *r15;
-  void *rbx, *rbp;
+  void *r12, *r13, *r14, *r15, *rbx;
 };
 
 #endif

@@ -26,13 +26,13 @@ int main() {
     tasks[i].p_data_in       = &izes[i];
   }
 
-  lbrFabricQueueTasks(tasks, 100, HIGH);
+  lbrFabricQueueTasks(tasks, 100, HIGH_PRIORITY);
 
   while (lock.acquired) {
   }
 
   for (int i = 0; i < 100; i++) {
-    printf("%d ", izes[i]);
+    printf("%zu ", izes[i]);
   }
 
   return 0;
