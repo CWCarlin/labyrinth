@@ -12,4 +12,4 @@ add_executable(Labyrinth main.c)
 
 find_package(Vulkan REQUIRED)
 
-add_subdirectory(base)
+add_subdirectory(labyrinth)
