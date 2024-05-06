@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "fabric/fabric.h"
 #include "fabric/fiber.h"
