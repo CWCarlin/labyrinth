@@ -1,7 +1,5 @@
 #include "fabric/fabric.h"
 
-#include <stdio.h>
-
 #include "allocators/block_alloc.h"
 #include "allocators/linear_alloc.h"
 #include "data_structures/hash.h"
@@ -80,7 +78,7 @@ void lbrInitializeFabric() {
 
   LbrBlockAllocatorCreateInfo block_alloc_info;
   block_alloc_info.num_blocks = NUM_FIBERS;
-  block_alloc_info.block_size = FIBER_STACK_SIZE;
+  block_alloc_info.block_size = FIBER_STACK_SIZE + FIBER_STACK_ALIGN;
   block_alloc_info.alignment  = FIBER_STACK_ALIGN;
 
   LbrLinearAllocatorCreateInfo linear_alloc_info;
@@ -128,6 +126,7 @@ void lbrInitializeFabric() {
     lbrSpinLockAcquire(&fabric_thread_setup_lock);
     LbrThread* p_thread = &fabric_thread_pool[i];
     lbrCreateThread((PFN_lbrEntryFunction)lbrFabricThreadSetup, i, p_thread);
+    lbrThreadSetAffinity(p_thread, i);
   }
 }
 

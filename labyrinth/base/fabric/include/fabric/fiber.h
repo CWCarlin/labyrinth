@@ -7,8 +7,6 @@ typedef struct lbr_task_t {
   PFN_lbrEntryFunction p_entry_point;
   void* p_first_arg;
   void* p_second_arg;
-  void* p_third_arg;
-  void* p_fourth_arg;
 } LbrTask;
 
 typedef struct lbr_fiber_context_t LbrFiberContext;
@@ -21,7 +19,7 @@ struct lbr_fiber_context_t {
   void* rbp;  // stack frame pointer
 
   // input argument
-  void *rcx, *rdx, *r8, *r9;
+  void *rcx, *rdx;
 
   // general use x64 registers
   void *r12, *r13, *r14, *r15;
@@ -40,7 +38,7 @@ struct lbr_fiber_context_t {
   void* rbp;  // stack frame pointer
 
   // input arguments
-  void *rdi, *rsi, *rdx, *rcx;
+  void *rdi, *rsi;
 
   // general use x64 registers
   void *r12, *r13, *r14, *r15, *rbx;

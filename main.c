@@ -10,6 +10,8 @@ LbrSpinLock lock = {100};
 void test() {
   lbrSpinLockDecrement(&lock);
 
+  printf("Hello Fiber\n");
+
   lbrFabricReturn();
 }
 
