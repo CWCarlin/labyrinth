@@ -16,6 +16,7 @@ target_link_libraries(fabric
 	utils
 	allocators
 	data_structures
+	math
 )
 
 target_link_libraries(${PROJECT_NAME} fabric)

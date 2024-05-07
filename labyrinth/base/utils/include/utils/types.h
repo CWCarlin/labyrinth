@@ -6,6 +6,8 @@
 #define LBR_NOP                     __asm("nop")
 #define LBR_ALIGN(bytes, alignment) (bytes = (bytes + alignment - 1) & ~(alignment - 1))
 
+typedef void (*PFN_lbrEntryFunction)(void*);
+
 // unsigned integers
 typedef uintptr_t uptr;
 typedef uint8_t u8;
@@ -27,3 +29,6 @@ typedef float f32;
 typedef double f64;
 
 void* LbrNOP();
+
+usize lbrUsizeHash(const usize* p_usize);
+u8 lbrUsizeEquality(const usize* p_usize_a, const usize* p_usize_b);

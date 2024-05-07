@@ -3,17 +3,12 @@
 #include "allocators/alloc_types.h"
 #include "utils/types.h"
 
-typedef void (*PFN_lbrFiberEntryFunction)(void*);
-
-typedef enum lbr_task_priority_e {
-  LOW_PRIORITY,
-  MEDIUM_PRIORITY,
-  HIGH_PRIORITY,
-} LbrTaskPriority;
-
 typedef struct lbr_task_t {
-  PFN_lbrFiberEntryFunction pfn_entry_point;
-  void* p_data_in;
+  PFN_lbrEntryFunction p_entry_point;
+  void* p_first_arg;
+  void* p_second_arg;
+  void* p_third_arg;
+  void* p_fourth_arg;
 } LbrTask;
 
 typedef struct lbr_fiber_context_t LbrFiberContext;
@@ -54,6 +49,7 @@ struct lbr_fiber_context_t {
 #endif
 
 typedef struct lbr_fiber_t {
+  usize fiber_id;
   void* stack;
   usize stack_size;
   LbrFiberContext context;
@@ -61,8 +57,9 @@ typedef struct lbr_fiber_t {
 } LbrFiber;
 
 typedef struct lbr_fiber_create_info_t {
+  usize fiber_id;
   usize stack_size;
-  PFN_lbrFiberEntryFunction pfn_fiber_entry;
+  PFN_lbrEntryFunction pfn_fiber_entry;
   LbrAllocCallbacks alloc_callbacks;
 } LbrFiberCreateInfo;
 
@@ -71,3 +68,4 @@ void lbrFiberConvertThread(LbrFiber* p_fiber);
 void lbrDestroyFiber(LbrFiber* p_fiber);
 void lbrFiberUpdate(LbrFiber* p_fiber);
 void lbrFiberSwap(LbrFiber* p_fiber_from, LbrFiber* p_fiber_to);
+void lbrFiberSetToTask(LbrFiber* p_fiber, LbrTask* p_task);

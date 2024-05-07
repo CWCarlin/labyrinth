@@ -1,191 +1,144 @@
 #include "fabric/fabric.h"
 
-#include <pthread.h>
-#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "allocators/block_alloc.h"
 #include "allocators/linear_alloc.h"
-#include "data_structures/list.h"
+#include "data_structures/hash.h"
+#include "data_structures/map.h"
 #include "data_structures/queue.h"
 #include "fabric/fiber.h"
 #include "fabric/lock.h"
+#include "fabric/thread.h"
+#include "math/prime.h"
 #include "utils/types.h"
 
 #define NUM_FIBERS        100
 #define FIBER_STACK_SIZE  16384
 #define FIBER_STACK_ALIGN 16
+#define MAX_TASKS         2000
 
-#define LINEAR_ALLOCATOR_PADDING 4096
+#define LINEAR_ALLOCATOR_BYTES(thread_count)                                                                                     \
+  ((usize)MAX_TASKS * sizeof(LbrTask) + (usize)NUM_FIBERS * sizeof(LbrFiber) +                                                   \
+   lbrGetNextPrime(thread_count) * (sizeof(LbrFiber) + sizeof(usize)) + thread_count * sizeof(LbrThread))
 
-#define MAX_TASKS 1000
+LbrBlockAllocator fabric_fiber_stack_allocator;
+LbrLinearAllocator fabric_linear_allocator;
 
-LbrBlockAllocator fiber_block_alloc;
-LbrLinearAllocator task_storage_alloc;
+LbrThread* fabric_thread_pool;
 
-// the way that these are stored needs to be rethought
-// each fiber should have an associated id that a thread
-// can do a linear search for when it needs to switch context
-pthread_t* fabric_threads;
-LbrFiber* running_fibers;
+LbrMap fabric_active_fibers_map;
 
-// THESE SHOULD HOLD POINTERS TO FIBERS
-LbrList locked_fibers;
-LbrSpinLock locked_fibers_lock;
+LbrQueue fabric_open_fibers_queue;
+LbrSpinLock fabric_open_fibers_queue_lock;
 
-LbrQueue open_fibers;
-LbrSpinLock open_fibers_lock;
+LbrQueue fabric_task_queue;
+LbrSpinLock fabric_task_queue_lock;
 
-LbrQueue low_priority_tasks;
-LbrSpinLock low_priority_tasks_lock;
+LbrSpinLock fabric_thread_setup_lock;
 
-LbrQueue medium_priority_tasks;
-LbrSpinLock medium_priority_tasks_lock;
+static void lbrFabricFiberAwaitWork() {
+  usize tid                = lbrThreadGetThreadID();
+  LbrFiber* p_active_fiber = lbrMapGetValue(&fabric_active_fibers_map, &tid);
 
-LbrQueue high_priority_tasks;
-LbrSpinLock high_priority_tasks_lock;
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-#include <sysinfoapi.h>
-usize lbrFabricGetThreadCount() {
-  SYSTEM_INFO sysinfo;
-  GetSystemInfo(&sysinfo);
-  return sysinfo.dwNumberOfProcessors;
-}
-#elif defined(__unix__) || defined(__unix) || defined(__linux__)
-#include <unistd.h>
-usize lbrFabricGetThreadCount() { return sysconf(_SC_NPROCESSORS_ONLN); }
-#endif
-
-static void lbrFabricFiberRuntime() {
   for (;;) {
-    while (high_priority_tasks.length > 0) {
-      if (lbrSpinLockTryAcquire(&high_priority_tasks_lock)) {
-        if (high_priority_tasks.length > 0) {
-          LbrTask task;
+    while (fabric_task_queue.length > 0) {
+      if (lbrSpinLockTryAcquire(&fabric_task_queue_lock)) {
+        if (fabric_task_queue.length > 0) {
           LbrFiber fiber;
+          LbrTask task;
+          lbrQueuePop(&fabric_task_queue, &task);
+          lbrSpinLockRelease(&fabric_task_queue_lock);
 
-          lbrQueuePop(&high_priority_tasks, &task);
-          lbrSpinLockRelease(&high_priority_tasks_lock);
+          lbrSpinLockAcquire(&fabric_open_fibers_queue_lock);
+          {
+            lbrQueuePop(&fabric_open_fibers_queue, &fiber);
+            lbrQueuePush(&fabric_open_fibers_queue, p_active_fiber);
+          }
+          lbrSpinLockRelease(&fabric_open_fibers_queue_lock);
 
-          lbrSpinLockAcquire(&open_fibers_lock);
-          lbrQueuePop(&open_fibers, &fiber);
-          lbrQueuePush(&open_fibers, &running_fibers[pthread_self() - 1]);
-          lbrSpinLockRelease(&open_fibers_lock);
-
-          fiber.context.rip = (uptr*)task.pfn_entry_point;
-          fiber.context.rdi = task.p_data_in;
-          lbrFiberSwap(&running_fibers[pthread_self() - 1], &fiber);
+          lbrFiberSetToTask(&fiber, &task);
+          lbrFiberSwap(p_active_fiber, &fiber);
         }
       }
     }
   }
 }
 
-static void* lbrFabricThreadInitialize() {
-  //LbrFiber* fiber = &running_fibers[pthread_self() - 1];
-  //lbrFiberConvertThread(fiber);
-
-  lbrFabricFiberRuntime();
-
-  return NULL;
+static void lbrFabricThreadSetup(const int* i) {
+  usize tid = lbrThreadGetThreadID();
+  LbrFiber fiber;
+  lbrFiberConvertThread(&fiber);
+  fiber.fiber_id = *i;
+  lbrMapInsert(&fabric_active_fibers_map, &tid, &fiber);
+  lbrSpinLockRelease(&fabric_thread_setup_lock);
+  lbrFabricFiberAwaitWork();
 }
 
 void lbrInitializeFabric() {
+  usize num_threads = lbrThreadGetThreadCount();
+
   LbrBlockAllocatorCreateInfo block_alloc_info;
-  block_alloc_info.block_size = FIBER_STACK_SIZE;
   block_alloc_info.num_blocks = NUM_FIBERS;
+  block_alloc_info.block_size = FIBER_STACK_SIZE;
   block_alloc_info.alignment  = FIBER_STACK_ALIGN;
-  lbrCreateBlockAllocator(&block_alloc_info, &fiber_block_alloc);
-
-  usize thread_count = lbrFabricGetThreadCount();
-
-  usize linear_alloc_bytes = NUM_FIBERS * sizeof(LbrFiber) * 3;
-  linear_alloc_bytes += thread_count * sizeof(pthread_t);
-  linear_alloc_bytes += MAX_TASKS * sizeof(LbrTask) * 3;
-  linear_alloc_bytes += LINEAR_ALLOCATOR_PADDING;
 
   LbrLinearAllocatorCreateInfo linear_alloc_info;
-  linear_alloc_info.bytes     = linear_alloc_bytes;
+  linear_alloc_info.bytes     = LINEAR_ALLOCATOR_BYTES(num_threads);
   linear_alloc_info.alignment = FIBER_STACK_ALIGN;
-  lbrCreateLinearAllocator(&linear_alloc_info, &task_storage_alloc);
 
-  LbrListCreateInfo list_info;
-  list_info.alloc_callbacks = task_storage_alloc.lbr_callbacks;
-  list_info.capacity        = NUM_FIBERS;
-  list_info.type_size       = sizeof(LbrFiber);
+  lbrCreateBlockAllocator(&block_alloc_info, &fabric_fiber_stack_allocator);
+  lbrCreateLinearAllocator(&linear_alloc_info, &fabric_linear_allocator);
 
-  lbrCreateList(&list_info, &locked_fibers);
+  LbrMapCreateInfo active_fiber_map_info;
+  active_fiber_map_info.alloc_callbacks = fabric_linear_allocator.lbr_callbacks;
+  active_fiber_map_info.capacity        = lbrGetNextPrime(num_threads);
+  active_fiber_map_info.key_size        = sizeof(usize);
+  active_fiber_map_info.value_size      = sizeof(LbrFiber);
+  active_fiber_map_info.hash_func       = (PFN_lbrHashFunc)lbrUsizeHash;
+  active_fiber_map_info.equality_func   = (PFN_lbrEqualityFunc)lbrUsizeEquality;
+
+  LbrQueueCreateInfo open_fibers_queue_info;
+  open_fibers_queue_info.alloc_callbacks = fabric_linear_allocator.lbr_callbacks;
+  open_fibers_queue_info.capacity        = NUM_FIBERS;
+  open_fibers_queue_info.type_size       = sizeof(LbrFiber);
 
   LbrQueueCreateInfo task_queue_info;
-  task_queue_info.alloc_callbacks = task_storage_alloc.lbr_callbacks;
+  task_queue_info.alloc_callbacks = fabric_linear_allocator.lbr_callbacks;
   task_queue_info.capacity        = MAX_TASKS;
   task_queue_info.type_size       = sizeof(LbrTask);
 
-  lbrCreateQueue(&task_queue_info, &low_priority_tasks);
-  lbrCreateQueue(&task_queue_info, &medium_priority_tasks);
-  lbrCreateQueue(&task_queue_info, &high_priority_tasks);
-
-  LbrQueueCreateInfo fiber_queue_info;
-  fiber_queue_info.alloc_callbacks = task_storage_alloc.lbr_callbacks;
-  fiber_queue_info.capacity        = NUM_FIBERS;
-  fiber_queue_info.type_size       = sizeof(LbrFiber);
-
-  lbrCreateQueue(&fiber_queue_info, &open_fibers);
+  lbrCreateMap(&active_fiber_map_info, &fabric_active_fibers_map);
+  lbrCreateQueue(&open_fibers_queue_info, &fabric_open_fibers_queue);
+  lbrCreateQueue(&task_queue_info, &fabric_task_queue);
 
   LbrFiberCreateInfo fiber_info;
-  fiber_info.alloc_callbacks = fiber_block_alloc.lbr_callbacks;
+  fiber_info.alloc_callbacks = fabric_fiber_stack_allocator.lbr_callbacks;
   fiber_info.stack_size      = FIBER_STACK_SIZE;
 
-  for (usize i = 0; i < NUM_FIBERS; i++) {
-    LbrFiber f;
-    lbrCreateFiber(&fiber_info, &f);
-    lbrQueuePush(&open_fibers, &f);
+  for (usize i = num_threads; i < NUM_FIBERS; i++) {
+    LbrFiber fiber;
+    fiber_info.fiber_id = i;
+    lbrCreateFiber(&fiber_info, &fiber);
+    lbrQueuePush(&fabric_open_fibers_queue, &fiber);
   }
 
-  running_fibers = lbrLinearAllocatorAllocate(&task_storage_alloc, sizeof(LbrFiber) * thread_count);
-  fabric_threads = lbrLinearAllocatorAllocate(&task_storage_alloc, sizeof(pthread_t) * thread_count);
-  for (usize i = 1; i < thread_count; i++) {
-    pthread_create(&fabric_threads[i], NULL, lbrFabricThreadInitialize, NULL);
+  fabric_thread_pool = lbrLinearAllocatorAllocate(&fabric_linear_allocator, sizeof(LbrThread) * num_threads);
+  for (usize i = 1; i < num_threads; i++) {
+    lbrSpinLockAcquire(&fabric_thread_setup_lock);
+    LbrThread* p_thread = &fabric_thread_pool[i];
+    lbrCreateThread((PFN_lbrEntryFunction)lbrFabricThreadSetup, i, p_thread);
   }
 }
 
-void lbrDismantleFabric() {
-  free(fiber_block_alloc.data);
-  free(task_storage_alloc.data);
-}
-
-void lbrFabricQueueTasks(LbrTask* p_tasks, usize num_tasks, LbrTaskPriority priority) {
-  LbrQueue* task_queue;
-  LbrSpinLock* queue_lock;
-  switch (priority) {
-    case LOW_PRIORITY:
-      task_queue = &low_priority_tasks;
-      queue_lock = &low_priority_tasks_lock;
-      break;
-    case MEDIUM_PRIORITY:
-      task_queue = &medium_priority_tasks;
-      queue_lock = &medium_priority_tasks_lock;
-      break;
-    case HIGH_PRIORITY:
-      task_queue = &high_priority_tasks;
-      queue_lock = &high_priority_tasks_lock;
-      break;
+void lbrFabricQueueTasks(LbrTask* p_tasks, usize num_tasks) {
+  lbrSpinLockAcquire(&fabric_task_queue_lock);
+  {
+    for (usize i = 0; i < num_tasks; i++) {
+      lbrQueuePush(&fabric_task_queue, &p_tasks[i]);
+    }
   }
-
-  lbrSpinLockAcquire(queue_lock);
-  for (usize i = 0; i < num_tasks; i++) {
-    lbrQueuePush(task_queue, &p_tasks[i]);
-  }
-  lbrSpinLockRelease(queue_lock);
+  lbrSpinLockRelease(&fabric_task_queue_lock);
 }
 
-void lbrFabricReturn() {
-  lbrSpinLockAcquire(&open_fibers_lock);
-  LbrFiber f;
-  lbrQueuePop(&open_fibers, &f);
-  lbrSpinLockRelease(&open_fibers_lock);
-  f.context.rip = (void*)lbrFabricFiberRuntime;
-  lbrFiberSwap(&running_fibers[pthread_self() - 1], &f);
-}
+void lbrFabricReturn() { lbrFabricFiberAwaitWork(); }

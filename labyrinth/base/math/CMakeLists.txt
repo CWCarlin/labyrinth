@@ -1,6 +1,7 @@
 add_library(math
-	src/vector.c
+	src/prime.c
 	src/quaternion.c
+	src/vector.c
 )
 
 target_include_directories(math

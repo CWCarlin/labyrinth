@@ -5,7 +5,7 @@
 #include "allocators/alloc_types.h"
 #include "utils/logging.h"
 
-static usize lbrMapFind(LbrMap* p_map, void* p_key) {
+static usize lbrMapFind(const LbrMap* p_map, void* p_key) {
   usize idx      = p_map->hash_func(p_key) % p_map->capacity;
   usize base_idx = idx;
   while (!p_map->equality_func(p_key, p_map->data + (idx * p_map->key_size))) {
@@ -62,7 +62,7 @@ void lbrMapInsert(LbrMap* p_map, void* p_key, void* p_value) {
   p_map->length++;
 }
 
-void* lbrMapGetValue(LbrMap* p_map, void* p_key) {
+void* lbrMapGetValue(const LbrMap* p_map, void* p_key) {
   usize idx = lbrMapFind(p_map, p_key);
   if (p_map->equality_func(p_key, p_map->data + (idx * p_map->key_size))) {
     return p_map->data + (p_map->capacity * p_map->key_size) + (idx * p_map->value_size);
@@ -80,7 +80,7 @@ void lbrMapRemove(LbrMap* p_map, void* p_key) {
   }
 }
 
-u8 lbrMapContainsKey(LbrMap* p_map, void* p_key) {
+u8 lbrMapContainsKey(const LbrMap* p_map, void* p_key) {
   usize idx = lbrMapFind(p_map, p_key);
   if (p_map->equality_func(p_key, p_map->data + (idx * p_map->key_size))) {
     return 1;

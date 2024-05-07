@@ -180,6 +180,7 @@ void lbrCreateFiber(LbrFiberCreateInfo* p_info, LbrFiber* p_fiber) {
   LBR_ALIGN(stack_size, STACK_ALIGNMENT);
 
   p_fiber->alloc_callbacks = p_info->alloc_callbacks;
+  p_fiber->fiber_id        = p_info->fiber_id;
   p_fiber->stack           = lbrAllocCallbacksAllocate(&p_info->alloc_callbacks, stack_size);
   p_fiber->stack_size      = stack_size;
   usize* stack_top         = (usize*)((u8*)p_fiber->stack + stack_size - 1);
@@ -195,4 +196,21 @@ void lbrFiberUpdate(LbrFiber* p_fiber) { lbr_update_context(&p_fiber->context); 
 
 void lbrFiberSwap(LbrFiber* p_fiber_from, LbrFiber* p_fiber_to) {
   lbr_swap_context(&p_fiber_from->context, &p_fiber_to->context);
+}
+
+void lbrFiberSetToTask(LbrFiber* p_fiber, LbrTask* p_task) {
+  p_fiber->context.rip = (uptr*)p_task->p_entry_point;
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
+  p_fiber->context.rcx = p_task->p_first_arg;
+  p_fiber->context.rdx = p_task->p_second_arg;
+  p_fiber->context.r8  = p_task->p_third_arg;
+  p_fiber->context.r9  = p_task->p_fourth_arg;
+
+#elif defined(__unix__) || defined(__unix) || defined(__linux__)
+  p_fiber->context.rdi = p_task->p_first_arg;
+  p_fiber->context.rsi = p_task->p_second_arg;
+  p_fiber->context.rdx = p_task->p_third_arg;
+  p_fiber->context.rcx = p_task->p_fourth_arg;
+#endif
 }

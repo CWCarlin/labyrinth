@@ -19,7 +19,6 @@ typedef struct lbr_map_create_info_t {
   usize capacity;
   usize key_size;
   usize value_size;
-  usize length;
   LbrAllocCallbacks alloc_callbacks;
   PFN_lbrHashFunc hash_func;
   PFN_lbrEqualityFunc equality_func;
@@ -28,6 +27,6 @@ typedef struct lbr_map_create_info_t {
 void lbrCreateMap(LbrMapCreateInfo* p_info, LbrMap* p_map);
 void lbrDestroyMap(LbrMap* p_map);
 void lbrMapInsert(LbrMap* p_map, void* p_key, void* p_value);
-void* lbrMapGetValue(LbrMap* p_map, void* p_key);
-u8 lbrMapContains(LbrMap* p_map, void* p_key);
+void* lbrMapGetValue(const LbrMap* p_map, void* p_key);
+u8 lbrMapContainsKey(const LbrMap* p_map, void* p_key);
 void lbrMapClear(LbrMap* p_map);

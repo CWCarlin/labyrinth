@@ -1,15 +1,13 @@
-#include <pthread.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "fabric/fabric.h"
 #include "fabric/fiber.h"
 #include "fabric/lock.h"
+#include "utils/types.h"
 
 LbrSpinLock lock = {100};
 
-void test(usize* i) {
-  *i = pthread_self();
+void test() {
   lbrSpinLockDecrement(&lock);
 
   lbrFabricReturn();
@@ -19,21 +17,18 @@ int main() {
   lbrInitializeFabric();
 
   LbrTask tasks[100];
-  usize izes[100];
 
   for (int i = 0; i < 100; i++) {
-    tasks[i].pfn_entry_point = (PFN_lbrFiberEntryFunction)test;
-    tasks[i].p_data_in       = &izes[i];
+    tasks[i].p_entry_point = (PFN_lbrEntryFunction)test;
   }
 
-  lbrFabricQueueTasks(tasks, 100, HIGH_PRIORITY);
+  lbrFabricQueueTasks(tasks, 100);
 
   while (lock.acquired) {
+    printf("%d\n", lock.acquired);
   }
 
-  for (int i = 0; i < 100; i++) {
-    printf("%zu ", izes[i]);
-  }
+  printf("Done!\n");
 
   return 0;
 }
