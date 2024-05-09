@@ -14,5 +14,4 @@ Checks: >
   -readability-identifier-length,
   -bugprone-easily-swappable-parameters,
   -readability-magic-numbers,
-  -performance-no-int-to-ptr
   

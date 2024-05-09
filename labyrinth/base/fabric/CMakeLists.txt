@@ -1,5 +1,4 @@
 add_library(fabric
-	src/fabric.c
 	src/fiber.c
 	src/lock.c
 	src/thread.c
