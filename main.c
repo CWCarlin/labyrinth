@@ -1,33 +1,32 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-#include "fabric/fiber.h"
+#include "fabric/fabric.h"
 #include "utils/types.h"
 
-LbrRegisterContext c[2];
+LbrFiber c[2];
+
+int j = 0;
 
 void foo() {
   printf("foooo\n");
-
-  lbrRegisterSwapContext(&c[1], &c[0]);
+  j--;
+  lbrFabricReturn();
 }
 
 int main() {
-  u8 data[4096];
-  u8* sp = data + sizeof data;
-  sp     = (u8*)((uintptr)sp & -16);  // NOLINT
-  sp -= 128;
+  lbrInitializeFabric();
 
-  LbrRegisterContext* cc = calloc(1, sizeof(LbrRegisterContext));
+  LbrTask tasks[100];
 
-  lbrRegisterGetContext(&c[0]);
+  for (int i = 0; i < 100; i++) {
+    tasks[i].entry_point = foo;
+    j++;
+  }
 
-  cc->rip = (uintptr*)foo;
-  cc->rsp = (uintptr*)sp;
+  lbrFabricQueueTasks(tasks, 100);
 
-  c[1] = *cc;
-
-  lbrRegisterSwapContext(&c[0], &c[1]);
+  while (j > 0) {
+  }
 
   printf("huh?\n");
 
