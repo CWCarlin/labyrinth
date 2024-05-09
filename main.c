@@ -1,15 +1,17 @@
 #include <stdio.h>
 
 #include "fabric/fabric.h"
+#include "fabric/lock.h"
 #include "utils/types.h"
 
 LbrFiber c[2];
 
-int j = 0;
+static volatile LbrSpinLock lock = {100};
 
 void foo() {
-  printf("foooo\n");
-  j--;
+  lock.acquired--;
+  printf("fooo %d\n", lock.acquired);
+
   lbrFabricReturn();
 }
 
@@ -19,13 +21,13 @@ int main() {
   LbrTask tasks[100];
 
   for (int i = 0; i < 100; i++) {
-    tasks[i].entry_point = foo;
-    j++;
+    tasks[i].entry_point = (PFN_lbrEntryFunction)foo;
   }
 
   lbrFabricQueueTasks(tasks, 100);
 
-  while (j > 0) {
+  while (lock.acquired) {
+    // printf("%d\n", lock.acquired);
   }
 
   printf("huh?\n");

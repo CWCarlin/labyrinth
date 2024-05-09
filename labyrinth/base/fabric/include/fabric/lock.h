@@ -1,9 +1,12 @@
 #pragma once
 
+#include <signal.h>
+
 #include "utils/types.h"
 
+
 typedef struct lbr_spin_lock_t {
-  u8 acquired;
+  sig_atomic_t acquired;
 } LbrSpinLock;
 
 u8 lbrSpinLockIsFree(LbrSpinLock* p_lock);

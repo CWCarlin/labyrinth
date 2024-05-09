@@ -10,19 +10,19 @@ typedef struct lbr_register_context_t LbrRegisterContext;
 // https://learn.microsoft.com/en-us/cpp/build/x64-software-conventions?view=msvc-170
 // https://en.wikipedia.org/wiki/Win32_Thread_Information_Block
 struct lbr_register_context_t {
-  uintptr* rip;  // instruction pointer
-  uintptr* rsp;  // stack pointer
+  uintptr rip;  // instruction pointer
+  uintptr rsp;  // stack pointer
 
   // general purpose x86_64 registers in Windows ABI
-  uintptr *r12, *r13, *r14, *r15;
-  uintptr *rdi, *rsi, *rbx, *rbp;
+  uintptr r12, r13, r14, r15;
+  uintptr rdi, rsi, rbx, rbp;
 
   // SIMD registers are callee saved under Windows ABI
   u128 xmm6, xmm7, xmm8, xmm9, xmm10;
   u128 xmm11, xmm12, xmm13, xmm14, xmm15;
 
   // Windows ABI argument registers
-  uintptr *rcx, *rdx;
+  uintptr rcx, rdx;
 };
 
 #else

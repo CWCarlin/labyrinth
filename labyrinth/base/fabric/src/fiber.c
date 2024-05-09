@@ -5,6 +5,8 @@
 #include "allocators/alloc_types.h"
 #include "utils/types.h"
 
+#pragma clang optimize off
+
 // https://gist.github.com/JiayinCao/07475d3423952b702d1efc5268b0df4e
 // https://stackoverflow.com/questions/71259613/c-fibers-crashing-on-printf
 
@@ -169,6 +171,7 @@ void lbrDestroyFiber(LbrFiber* p_fiber) {
 void lbrFiberConvertThread(LbrFiber* p_fiber) {
   memset(p_fiber, 0, sizeof(LbrFiber));
   lbr_get_register_context(&p_fiber->context);
+  p_fiber->stack       = (void*)p_fiber->context.rsp;  // NOLINT
   p_fiber->from_thread = 1;
 }
 
@@ -181,17 +184,16 @@ void lbrFiberSwapContext(LbrFiber* p_fiber_from, LbrFiber* p_fiber_to) {
 }
 
 void lbrFiberSetToTask(LbrFiber* p_fiber, LbrTask* p_task) {
-  p_fiber->context.rip = (uintptr*)p_task->entry_point;
-  p_fiber->context.rcx = (uintptr*)p_task->first_argument;
-  p_fiber->context.rdx = (uintptr*)p_task->second_argument;
+  p_fiber->context.rip = (uintptr)p_task->entry_point;
+  p_fiber->context.rcx = (uintptr)p_task->first_argument;
+  p_fiber->context.rdx = (uintptr)p_task->second_argument;
 }
 
 void lbrFiberReset(LbrFiber* p_fiber) {
   if (!p_fiber->from_thread) {
-    p_fiber->context.rsp = (uintptr*)((u8*)p_fiber->stack + p_fiber->stack_size);
-    p_fiber->context.rsp = (uintptr*)((u8*)((uintptr)p_fiber->context.rsp & -16L) - 128);  // NOLINT
-    uintptr* rsp         = p_fiber->context.rsp;
-    memset(&p_fiber->context, 0, sizeof(LbrRegisterContext));
-    p_fiber->context.rsp = rsp;
+    p_fiber->context.rsp = (uintptr)((u8*)p_fiber->stack + p_fiber->stack_size);
+    p_fiber->context.rsp = ((p_fiber->context.rsp & -16L) - 128);
+  } else {
+    p_fiber->context.rsp = (uintptr)p_fiber->stack;
   }
 }

@@ -10,7 +10,7 @@
 #include "fabric/thread.h"
 #include "utils/types.h"
 
-#define NUM_FIBERS        100
+#define NUM_FIBERS        150
 #define FIBER_STACK_SIZE  16384
 #define FIBER_STACK_ALIGN 16
 #define MAX_TASKS         2000
@@ -52,6 +52,7 @@ static void lbrFabricFiberAwaitWork(int i) {
           }
           lbrSpinLockRelease(&fabric_open_fibers_queue_lock);
 
+          lbrFiberReset(&fiber);
           lbrFiberSetToTask(&fiber, &task);
           fabric_active_fibers[i] = fiber;
           lbrFiberSwapContext(&active_fiber, &fiber);
@@ -135,9 +136,6 @@ void lbrFabricReturn() {
   lbrFiberGetContext(&fiber);
 
   for (int i = 1; i < 2; i++) {
-    LbrFiber* p_fiber = &fabric_active_fibers[i];
-    printf("%d\n", p_fiber->id);
-    lbrFiberReset(p_fiber);
     lbrFabricFiberAwaitWork(i);
   }
 }
