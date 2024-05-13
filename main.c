@@ -15,7 +15,7 @@ void baz(const usize* i) {
   lbrFabricQueueTasks(new_tasks, 10, &p_sem);
   lbrFabricWaitForSemaphore(p_sem, 0);
   lbrFabricFreeSemaphore(&p_sem);
-  printf("heee %d\n", *i);
+  printf("heee %zu\n", *i);
 }
 
 int main() {

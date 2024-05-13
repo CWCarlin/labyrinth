@@ -200,7 +200,7 @@ static void lbrFabricAwaitTasks() {
       lbrQueuePop(&g_fabric.open_fibers_queue, &p_fiber);
       lbrSpinLockRelease(&g_fabric.open_fibers_lock);
       p_fiber->context.rip = (uintptr)lbrFabricFiberRuntime;
-      p_fiber->context.rcx = (uintptr)&task;
+      p_fiber->context.rdi = (uintptr)&task;
 
       g_fabric.active_fibers[thread_id] = p_fiber;
       lbrFiberSwapContext(&g_fabric.thread_fibers[thread_id], p_fiber);

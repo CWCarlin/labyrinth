@@ -153,6 +153,94 @@ __asm(
     "jmpq     *%r8                    \n\t");
 
 #elif defined(__linux__)
+
+__asm(
+    ".text                            \n"
+    ".align 4                         \n"
+    "lbr_get_register_context:        \n\t"
+
+    "movq     (%rsp),     %r8         \n\t"
+    "movq     %r8,        0(%rdi)     \n\t"  // rip -> struct
+    "leaq     8(%rsp),    %r8         \n\t"
+    "movq     %r8,        8(%rdi)     \n\t"  // rsp -> struct
+
+    "movq     %r12,       16(%rdi)    \n\t"  // r12 -> struct
+    "movq     %r13,       24(%rdi)    \n\t"  // r13 -> struct
+    "movq     %r14,       32(%rdi)    \n\t"  // r14 -> struct
+    "movq     %r15,       40(%rdi)    \n\t"  // r15 -> struct
+
+    "movq     %rbx,       48(%rdi)    \n\t"  // rbx -> struct
+    "movq     %rbp,       56(%rdi)    \n\t"  // rbp -> struct
+
+    "movq     %fs,        %r8         \n\t"
+    "movq     %r8,        80(%rdi)    \n\t"
+
+    "ret");
+
+__asm(
+    ".text                            \n"
+    ".align 4                         \n"
+    "lbr_set_register_context:        \n\t"
+
+    "movq     0(%rdi),     %r8        \n\t"  // struct.rip -> temp
+    "movq     8(%rdi),     %rsp       \n\t"  // struct.rsp -> rsp
+
+    "movq     16(%rdi),    %r12       \n\t"  // struct.r12 -> r12
+    "movq     24(%rdi),    %r13       \n\t"  // struct.r13 -> r13
+    "movq     32(%rdi),    %r14       \n\t"  // struct.r14 -> r14
+    "movq     40(%rdi),    %r15       \n\t"  // struct.r15 -> r15
+
+    "movq     48(%rdi),    %rbx       \n\t"  // struct.rbx -> rbx
+    "movq     56(%rdi),    %rbp       \n\t"  // struct.rbp -> rbp
+
+    "movq     72(%rdi),    %rsi       \n\t"  // struct.rsi -> rsi
+    "movq     80(%rdi),    %r9        \n\t"
+    "movq     %r9,         %fs        \n\t"
+    "movq     64(%rdi),    %rdi       \n\t"  // struct.rdi -> rdi
+
+    "jmpq     *%r8                    \n\t");
+
+__asm(
+    ".text                            \n"
+    ".align 4                         \n"
+    "lbr_swap_register_context:       \n\t"
+
+    // get context
+    "movq     (%rsp),     %r8         \n\t"
+    "movq     %r8,        0(%rdi)     \n\t"  // rip -> struct
+    "leaq     8(%rsp),    %r8         \n\t"
+    "movq     %r8,        8(%rdi)     \n\t"  // rsp -> struct
+
+    "movq     %r12,       16(%rdi)    \n\t"  // r12 -> struct
+    "movq     %r13,       24(%rdi)    \n\t"  // r13 -> struct
+    "movq     %r14,       32(%rdi)    \n\t"  // r14 -> struct
+    "movq     %r15,       40(%rdi)    \n\t"  // r15 -> struct
+
+    "movq     %rbx,       48(%rdi)    \n\t"  // rbx -> struct
+    "movq     %rbp,       56(%rdi)    \n\t"  // rbp -> struct
+
+    "movq     %fs,        %r8         \n\t"
+    "movq     %r8,        80(%rdi)    \n\t"
+
+    // set context
+    "movq     0(%rdi),     %r8        \n\t"  // struct.rip -> temp
+    "movq     8(%rdi),     %rsp       \n\t"  // struct.rsp -> rsp
+
+    "movq     16(%rdi),    %r12       \n\t"  // struct.r12 -> r12
+    "movq     24(%rdi),    %r13       \n\t"  // struct.r13 -> r13
+    "movq     32(%rdi),    %r14       \n\t"  // struct.r14 -> r14
+    "movq     40(%rdi),    %r15       \n\t"  // struct.r15 -> r15
+
+    "movq     48(%rdi),    %rbx       \n\t"  // struct.rbx -> rbx
+    "movq     56(%rdi),    %rbp       \n\t"  // struct.rbp -> rbp
+
+    "movq     72(%rdi),    %rsi       \n\t"  // struct.rsi -> rsi
+    "movq     80(%rdi),    %r9        \n\t"
+    "movq     %r9,         %fs        \n\t"
+    "movq     64(%rdi),    %rdi       \n\t"  // struct.rdi -> rdi
+
+    "jmpq     *%r8                    \n\t");
+
 #endif
 
 extern __attribute__((noinline)) void lbr_get_register_context(volatile LbrRegisterContext* p_context);

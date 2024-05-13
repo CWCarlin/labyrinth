@@ -23,6 +23,8 @@ struct lbr_register_context_t {
 
   // Windows ABI argument registers
   uintptr rcx, rdx;
+
+  // Windows x86_64 thread pointer
   uintptr gs;
 };
 
@@ -30,15 +32,18 @@ struct lbr_register_context_t {
 
 // file:///C:/Users/Chandler/Downloads/abi.pdf
 struct lbr_register_context_t {
-  uintptr* rip;  // instruction pointer
-  uintptr* rsp;  // stack pointer
+  uintptr rip;  // instruction pointer
+  uintptr rsp;  // stack pointer
 
   // general purpose x86_64 registers in SysV ABI
-  uintptr *r12, *r13, *r14, *r15;
-  uintptr *rbx, *rbp;
+  uintptr r12, r13, r14, r15;
+  uintptr rbx, rbp;
 
   // SysV ABI argument registers
-  uintptr *rdi, *rsi;
+  uintptr rdi, rsi;
+
+  // SysV ABI thread pointer
+  uintptr fs;
 };
 
 #endif

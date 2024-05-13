@@ -36,9 +36,8 @@ usize lbrThreadGetThreadCount() { return 2; }  // sysconf(_SC_NPROCESSORS_ONLN);
 
 usize lbrThreadGetThreadID() { return pthread_self(); }
 
-void lbrCreateThread(PFN_lbrEntryFunction pfn_entry, usize flag, LbrThread* p_thread) {
-  pthread_create(&p_thread->thread_handle, NULL, (void* (*)(void*))pfn_entry, &flag);
-  p_thread->thread_id = (usize)p_thread->thread_handle;
+void lbrCreateThread(uintptr pfn_entry, LbrThread* p_thread) {
+  pthread_create(&p_thread->thread_handle, NULL, (void* (*)(void*))pfn_entry, &p_thread->thread_id); //NOLINT
 }
 
 void lbrDestroyThread(LbrThread* p_thread) { pthread_cancel(p_thread->thread_handle); }
