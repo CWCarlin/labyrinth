@@ -23,6 +23,7 @@ struct lbr_register_context_t {
 
   // Windows ABI argument registers
   uintptr rcx, rdx;
+  uintptr gs;
 };
 
 #else
@@ -51,23 +52,15 @@ typedef struct lbr_fiber_create_info_t {
 typedef struct lbr_fiber_t {
   usize id;
   void* stack;
-  usize stack_size;
+  uintptr stack_top;
   LbrRegisterContext context;
   LbrAllocCallbacks alloc_callbacks;
-  u8 from_thread;
 } LbrFiber;
-
-typedef struct lbr_task_t {
-  PFN_lbrEntryFunction entry_point;
-  void* first_argument;
-  void* second_argument;
-} LbrTask;
 
 void lbrCreateFiber(LbrFiberCreateInfo* p_info, LbrFiber* p_fiber);
 void lbrDestroyFiber(LbrFiber* p_fiber);
 void lbrFiberConvertThread(LbrFiber* p_fiber);
-void lbrFiberGetContext(LbrFiber* p_fiber);
-void lbrFiberSetContext(LbrFiber* p_fiber);
-void lbrFiberSwapContext(LbrFiber* p_fiber_from, LbrFiber* p_fiber_to);
-void lbrFiberSetToTask(LbrFiber* p_fiber, LbrTask* p_task);
+void lbrFiberGetContext(volatile LbrFiber* p_fiber);
+void lbrFiberSetContext(volatile LbrFiber* p_fiber);
+void lbrFiberSwapContext(volatile LbrFiber* p_fiber_from, volatile LbrFiber* p_fiber_to);
 void lbrFiberReset(LbrFiber* p_fiber);

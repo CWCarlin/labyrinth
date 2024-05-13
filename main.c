@@ -1,36 +1,40 @@
 #include <stdio.h>
 
 #include "fabric/fabric.h"
-#include "fabric/lock.h"
-#include "utils/types.h"
+#include "fabric/synchronize.h"
 
-LbrFiber c[2];
+void foo() { printf("foo\n"); }
 
-static volatile LbrSpinLock lock = {100};
+void baz() {
+  LbrTask new_tasks[10];
 
-void foo() {
-  lock.acquired--;
-  printf("fooo %d\n", lock.acquired);
+  for (usize i = 0; i < 10; i++) {
+    new_tasks[i].pfn_task = foo;
+  }
 
-  lbrFabricReturn();
+  LbrSemaphore* p_sem = NULL;
+  lbrFabricQueueTasks(new_tasks, 10, &p_sem);
+  lbrFabricWaitForSemaphore(p_sem, 0);
+  lbrFabricFreeSemaphore(&p_sem);
+  printf("heee\n");
 }
 
 int main() {
   lbrInitializeFabric();
 
-  LbrTask tasks[100];
+  LbrTask task;
+  task.pfn_task = baz;
 
-  for (int i = 0; i < 100; i++) {
-    tasks[i].entry_point = (PFN_lbrEntryFunction)foo;
+  LbrSemaphore* semm;
+
+  lbrFabricQueueTasks(&task, 1, &semm);
+
+  printf("%p\n", semm);
+
+  while (semm->count != 0) {
   }
 
-  lbrFabricQueueTasks(tasks, 100);
-
-  while (lock.acquired) {
-    // printf("%d\n", lock.acquired);
-  }
-
-  printf("huh?\n");
+  printf("working!\n");
 
   return 0;
 }

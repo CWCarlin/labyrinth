@@ -5,12 +5,11 @@
 #include "allocators/alloc_types.h"
 #include "utils/types.h"
 
-#pragma clang optimize off
-
 // https://gist.github.com/JiayinCao/07475d3423952b702d1efc5268b0df4e
 // https://stackoverflow.com/questions/71259613/c-fibers-crashing-on-printf
 
-#define LBR_FIBER_STACK_ALIGNMENT 16
+#define LBR_FIBER_STACK_ALIGNMENT   16
+#define LBR_FIBER_THREAD_STACK_SIZE 16384
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 
@@ -45,6 +44,9 @@ __asm(
     "movups   %xmm14,     208(%rcx)   \n\t"  // xmm14 -> struct
     "movups   %xmm15,     224(%rcx)   \n\t"  // xmm15 -> struct
 
+    "movq     %gs,        %r8         \n\t"
+    "movq     %r8,        256(%rcx)   \n\t"
+
     "ret");
 
 __asm(
@@ -77,6 +79,8 @@ __asm(
     "movups   224(%rcx),   %xmm15     \n\t"  // struct.xmm15 -> xmm15
 
     "movq     240(%rcx),   %rdx       \n\t"  // struct.rdx -> rdx
+    "movq     256(%rcx),   %r9        \n\t"
+    "movq     %r9,         %gs        \n\t"
     "movq     248(%rcx),   %rcx       \n\t"  // struct.rcx -> rcx
 
     "jmpq     *%r8                    \n\t");
@@ -103,7 +107,7 @@ __asm(
     "movq     %rbp,       72(%rcx)    \n\t"  // rbp -> struct_from
 
     "movups   %xmm6,      80(%rcx)    \n\t"  // xmm6 -> struct_from
-    "movups   %xmm7,      96(%rcx)   \n\t"   // xmm7 -> struct_from
+    "movups   %xmm7,      96(%rcx)    \n\t"  // xmm7 -> struct_from
     "movups   %xmm8,      112(%rcx)   \n\t"  // xmm8 -> struct_from
     "movups   %xmm9,      128(%rcx)   \n\t"  // xmm9 -> struct_from
     "movups   %xmm10,     144(%rcx)   \n\t"  // xmm10 -> struct_from
@@ -112,6 +116,9 @@ __asm(
     "movups   %xmm13,     192(%rcx)   \n\t"  // xmm13 -> struct_from
     "movups   %xmm14,     208(%rcx)   \n\t"  // xmm14 -> struct_from
     "movups   %xmm15,     224(%rcx)   \n\t"  // xmm15 -> struct_from
+
+    "movq     %gs,        %r8         \n\t"
+    "movq     %r8,        256(%rcx)   \n\t"
 
     // set context
     "movq     0(%rdx),     %r8        \n\t"  // struct_tp.rip -> temp
@@ -139,6 +146,8 @@ __asm(
     "movups   224(%rdx),   %xmm15     \n\t"  // struct_to.xmm15 -> xmm15
 
     "movq     240(%rdx),   %rcx       \n\t"  // struct_to.rdx -> rcx
+    "movq     256(%rdx),   %r9        \n\t"
+    "movq     %r9,         %gs        \n\t"
     "movq     248(%rdx),   %rdx       \n\t"  // struct_to.rcx -> rdx
 
     "jmpq     *%r8                    \n\t");
@@ -146,21 +155,21 @@ __asm(
 #elif defined(__linux__)
 #endif
 
-extern __attribute__((noinline)) void lbr_get_register_context(LbrRegisterContext* p_context);
-extern __attribute__((noinline)) void lbr_set_register_context(LbrRegisterContext* p_context);
-extern __attribute__((noinline)) void lbr_swap_register_context(LbrRegisterContext* p_context_from,
-                                                                LbrRegisterContext* p_context_to);
+extern __attribute__((noinline)) void lbr_get_register_context(volatile LbrRegisterContext* p_context);
+extern __attribute__((noinline)) void lbr_set_register_context(volatile LbrRegisterContext* p_context);
+extern __attribute__((noinline)) void lbr_swap_register_context(volatile LbrRegisterContext* p_context_from,
+                                                                volatile LbrRegisterContext* p_context_to);
 
 void lbrCreateFiber(LbrFiberCreateInfo* p_info, LbrFiber* p_fiber) {
-  usize stack_size = LBR_ALIGN(p_info->stack_size, LBR_FIBER_STACK_ALIGNMENT);
-
   p_fiber->alloc_callbacks = p_info->alloc_callbacks;
   p_fiber->id              = p_info->id;
-  p_fiber->stack_size      = p_info->stack_size;
-  p_fiber->stack           = lbrAllocCallbacksAllocate(&p_info->alloc_callbacks, stack_size);
-  p_fiber->from_thread     = 0;
+  p_fiber->stack           = lbrAllocCallbacksAllocate(&p_info->alloc_callbacks, p_info->stack_size);
 
-  lbrFiberReset(p_fiber);
+  uintptr stack_top = (uintptr)((u8*)(p_fiber->stack) + p_info->stack_size) - LBR_FIBER_STACK_ALIGNMENT;
+  LBR_ALIGN(stack_top, LBR_FIBER_STACK_ALIGNMENT);
+  p_fiber->context.rbp = (uintptr)p_fiber->stack;
+  p_fiber->context.rsp = stack_top;
+  p_fiber->stack_top   = p_fiber->context.rsp;
 }
 
 void lbrDestroyFiber(LbrFiber* p_fiber) {
@@ -169,31 +178,17 @@ void lbrDestroyFiber(LbrFiber* p_fiber) {
 }
 
 void lbrFiberConvertThread(LbrFiber* p_fiber) {
-  memset(p_fiber, 0, sizeof(LbrFiber));
   lbr_get_register_context(&p_fiber->context);
-  p_fiber->stack       = (void*)p_fiber->context.rsp;  // NOLINT
-  p_fiber->from_thread = 1;
+  p_fiber->stack_top = p_fiber->context.rsp;
+  p_fiber->stack     = (void*)(p_fiber->stack_top);  // NOLINT
 }
 
-void lbrFiberGetContext(LbrFiber* p_fiber) { lbr_get_register_context(&p_fiber->context); }
+void lbrFiberGetContext(volatile LbrFiber* p_fiber) { lbr_get_register_context(&p_fiber->context); }
 
-void lbrFiberSetContext(LbrFiber* p_fiber) { lbr_set_register_context(&p_fiber->context); }
+void lbrFiberSetContext(volatile LbrFiber* p_fiber) { lbr_set_register_context(&p_fiber->context); }
 
-void lbrFiberSwapContext(LbrFiber* p_fiber_from, LbrFiber* p_fiber_to) {
+void lbrFiberSwapContext(volatile LbrFiber* p_fiber_from, volatile LbrFiber* p_fiber_to) {
   lbr_swap_register_context(&p_fiber_from->context, &p_fiber_to->context);
 }
 
-void lbrFiberSetToTask(LbrFiber* p_fiber, LbrTask* p_task) {
-  p_fiber->context.rip = (uintptr)p_task->entry_point;
-  p_fiber->context.rcx = (uintptr)p_task->first_argument;
-  p_fiber->context.rdx = (uintptr)p_task->second_argument;
-}
-
-void lbrFiberReset(LbrFiber* p_fiber) {
-  if (!p_fiber->from_thread) {
-    p_fiber->context.rsp = (uintptr)((u8*)p_fiber->stack + p_fiber->stack_size);
-    p_fiber->context.rsp = ((p_fiber->context.rsp & -16L) - 128);
-  } else {
-    p_fiber->context.rsp = (uintptr)p_fiber->stack;
-  }
-}
+void lbrFiberReset(LbrFiber* p_fiber) { p_fiber->context.rsp = p_fiber->stack_top; }

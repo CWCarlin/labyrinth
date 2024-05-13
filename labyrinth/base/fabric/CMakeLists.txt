@@ -1,7 +1,7 @@
 add_library(fabric
 	src/fabric.c
 	src/fiber.c
-	src/lock.c
+	src/synchronize.c
 	src/thread.c
 )
 
@@ -16,7 +16,6 @@ target_link_libraries(fabric
 	utils
 	allocators
 	data_structures
-	math_lib
 )
 
 target_link_libraries(${PROJECT_NAME} fabric)
