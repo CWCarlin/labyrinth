@@ -5,9 +5,8 @@
 
 void foo() { printf("foo\n"); }
 
-void baz() {
+void baz(const usize* i) {
   LbrTask new_tasks[10];
-
   for (usize i = 0; i < 10; i++) {
     new_tasks[i].pfn_task = foo;
   }
@@ -16,25 +15,31 @@ void baz() {
   lbrFabricQueueTasks(new_tasks, 10, &p_sem);
   lbrFabricWaitForSemaphore(p_sem, 0);
   lbrFabricFreeSemaphore(&p_sem);
-  printf("heee\n");
+  printf("heee %d\n", *i);
 }
 
 int main() {
   lbrInitializeFabric();
 
-  LbrTask task;
-  task.pfn_task = baz;
+  LbrTask tasks[10];
+  usize in[10];
+  for (usize i = 0; i < 10; i++) {
+    in[i]             = i;
+    tasks[i].pfn_task = (PFN_lbrTaskFunction)baz;
+    tasks[i].p_input  = &in[i];
+  }
 
   LbrSemaphore* semm;
 
-  lbrFabricQueueTasks(&task, 1, &semm);
-
-  printf("%p\n", semm);
+  lbrFabricQueueTasks(tasks, 10, &semm);
 
   while (semm->count != 0) {
   }
 
   printf("working!\n");
+
+  for (;;) {
+  }
 
   return 0;
 }

@@ -205,6 +205,7 @@ static void lbrFabricAwaitTasks() {
       g_fabric.active_fibers[thread_id] = p_fiber;
       lbrFiberSwapContext(&g_fabric.thread_fibers[thread_id], p_fiber);
     }
+    __builtin_ia32_pause();
   }
 }
 
