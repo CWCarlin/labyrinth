@@ -14,7 +14,8 @@ void VulkanLog(const char* color, const char* type, const char* severity, const 
 
 VKAPI_ATTR VkBool32 lbrLogVulkanValidation(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
                                            VkDebugUtilsMessageTypeFlagBitsEXT type,
-                                           const VkDebugUtilsMessengerCallbackDataEXT* callback_data, ...) {
+                                           const VkDebugUtilsMessengerCallbackDataEXT* callback_data, void* data) {
+  (void)data;
   char* message_type;
   switch (type) {
     case VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT:

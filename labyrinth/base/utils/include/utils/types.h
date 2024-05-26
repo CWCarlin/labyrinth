@@ -36,3 +36,4 @@ void* LbrNOP();
 
 usize lbrUsizeHash(const usize* p_usize);
 u8 lbrUsizeEquality(const usize* p_usize_a, const usize* p_usize_b);
+int lbrU32Compare(const void* p_u32_a, const void* p_u32_b);

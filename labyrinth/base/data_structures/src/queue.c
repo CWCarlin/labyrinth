@@ -5,7 +5,7 @@
 #include "allocators/alloc_types.h"
 #include "utils/logging.h"
 
-void lbrCreateQueue(LbrQueueCreateInfo* p_info, LbrQueue* p_queue) {
+void lbrDefineQueue(LbrQueueCreateInfo* p_info, LbrQueue* p_queue) {
   usize capacity  = p_info->capacity;
   usize type_size = p_info->type_size;
 

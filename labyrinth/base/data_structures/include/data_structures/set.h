@@ -23,7 +23,7 @@ typedef struct lbr_set_create_info_t {
   PFN_lbrEqualityFunc equality_func;
 } LbrSetCreateInfo;
 
-void lbrCreateSet(LbrSetCreateInfo* p_info, LbrSet* p_set);
+void lbrDefineSet(LbrSetCreateInfo* p_info, LbrSet* p_set);
 void lbrDestroySet(LbrSet* p_set);
 void lbrSetInsert(LbrSet* p_set, void* p_key);
 void lbrSetRemove(LbrSet* p_set, void* p_key);

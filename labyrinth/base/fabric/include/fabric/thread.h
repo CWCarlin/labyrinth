@@ -23,6 +23,7 @@ struct lbr_thread_t {
 #endif
 
 usize lbrThreadGetThreadCount();
-void lbrCreateThread(uintptr pfn_entry, LbrThread* p_thread);
+LbrThread lbrThreadGetMainThread();
+void lbrDefineThread(uintptr pfn_entry, LbrThread* p_thread);
 void lbrDestroyThread(LbrThread* p_thread);
 void lbrThreadSetAffinity(LbrThread* p_thread, usize thread_idx);

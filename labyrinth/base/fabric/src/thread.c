@@ -1,5 +1,6 @@
 #include "fabric/thread.h"
 
+#include <processthreadsapi.h>
 #include <time.h>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
@@ -11,7 +12,15 @@ usize lbrThreadGetThreadCount() {
   return sysinfo.dwNumberOfProcessors;
 }
 
-void lbrCreateThread(uintptr pfn_entry, LbrThread* p_thread) {
+LbrThread lbrThreadGetMainThread() {
+  LbrThread thread;
+  thread.thread_id     = 0;
+  thread.thread_handle = GetCurrentThread();
+
+  return thread;
+}
+
+void lbrDefineThread(uintptr pfn_entry, LbrThread* p_thread) {
   p_thread->thread_handle =
       CreateThread(NULL, 16328, (LPTHREAD_START_ROUTINE)pfn_entry, &p_thread->thread_id, 0, NULL);  // NOLINT
 }
@@ -37,7 +46,7 @@ usize lbrThreadGetThreadCount() { return 2; }  // sysconf(_SC_NPROCESSORS_ONLN);
 usize lbrThreadGetThreadID() { return pthread_self(); }
 
 void lbrCreateThread(uintptr pfn_entry, LbrThread* p_thread) {
-  pthread_create(&p_thread->thread_handle, NULL, (void* (*)(void*))pfn_entry, &p_thread->thread_id); //NOLINT
+  pthread_create(&p_thread->thread_handle, NULL, (void* (*)(void*))pfn_entry, &p_thread->thread_id);  // NOLINT
 }
 
 void lbrDestroyThread(LbrThread* p_thread) { pthread_cancel(p_thread->thread_handle); }

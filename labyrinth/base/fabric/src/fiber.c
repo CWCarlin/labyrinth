@@ -248,7 +248,7 @@ extern __attribute__((noinline)) void lbr_set_register_context(volatile LbrRegis
 extern __attribute__((noinline)) void lbr_swap_register_context(volatile LbrRegisterContext* p_context_from,
                                                                 volatile LbrRegisterContext* p_context_to);
 
-void lbrCreateFiber(LbrFiberCreateInfo* p_info, LbrFiber* p_fiber) {
+void lbrDefineFiber(LbrFiberCreateInfo* p_info, LbrFiber* p_fiber) {
   p_fiber->alloc_callbacks = p_info->alloc_callbacks;
   p_fiber->id              = p_info->id;
   p_fiber->stack           = lbrAllocCallbacksAllocate(&p_info->alloc_callbacks, p_info->stack_size);
@@ -263,6 +263,11 @@ void lbrCreateFiber(LbrFiberCreateInfo* p_info, LbrFiber* p_fiber) {
 void lbrDestroyFiber(LbrFiber* p_fiber) {
   lbrAllocCallbacksFree(&p_fiber->alloc_callbacks, p_fiber->stack);
   memset(p_fiber, 0, sizeof(LbrFiber));
+}
+
+void lbrFiberPrepare(LbrFiber* p_fiber, uintptr pfn_func, uintptr arg) {
+  p_fiber->context.rip = pfn_func;
+  p_fiber->context.rcx = arg;
 }
 
 void lbrFiberConvertThread(LbrFiber* p_fiber) {

@@ -19,7 +19,7 @@ typedef struct lbr_queue_create_info_t {
   LbrAllocCallbacks alloc_callbacks;
 } LbrQueueCreateInfo;
 
-void lbrCreateQueue(LbrQueueCreateInfo* p_info, LbrQueue* p_queue);
+void lbrDefineQueue(LbrQueueCreateInfo* p_info, LbrQueue* p_queue);
 void lbrDestroyQueue(LbrQueue* p_queue);
 void lbrQueuePush(LbrQueue* p_queue, void* p_data_in);
 void lbrQueuePop(LbrQueue* p_queue, void* p_data_out);

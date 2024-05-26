@@ -30,7 +30,7 @@ static usize lbrMapFind(const LbrMap* p_map, void* p_key) {
   return idx;
 }
 
-void lbrCreateMap(LbrMapCreateInfo* p_info, LbrMap* p_map) {
+void lbrDefineMap(LbrMapCreateInfo* p_info, LbrMap* p_map) {
   usize capacity   = p_info->capacity;
   usize key_size   = p_info->key_size;
   usize value_size = p_info->value_size;

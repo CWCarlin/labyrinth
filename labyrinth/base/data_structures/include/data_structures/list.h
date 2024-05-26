@@ -25,7 +25,7 @@ typedef struct lbr_list_create_info_t {
   LbrAllocCallbacks alloc_callbacks;
 } LbrListCreateInfo;
 
-void lbrCreateList(LbrListCreateInfo* p_info, LbrList* p_list);
+void lbrDefineList(LbrListCreateInfo* p_info, LbrList* p_list);
 void lbrDestroyList(LbrList* p_list);
 void lbrListPushBack(LbrList* p_list, void* p_data_in);
 void* lbrListAt(LbrList* p_list, usize idx);

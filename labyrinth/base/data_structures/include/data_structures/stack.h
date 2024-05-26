@@ -17,7 +17,7 @@ typedef struct lbr_stack_create_info_t {
   LbrAllocCallbacks alloc_callbacks;
 } LbrStackCreateInfo;
 
-void lbrCreateStack(LbrStackCreateInfo* p_info, LbrStack* p_stack);
+void lbrDefineStack(LbrStackCreateInfo* p_info, LbrStack* p_stack);
 void lbrDestroyStack(LbrStack* p_stack);
 void lbrStackPush(LbrStack* p_stack, void* p_data_in);
 void lbrStackPop(LbrStack* p_stack, void* p_data_out);

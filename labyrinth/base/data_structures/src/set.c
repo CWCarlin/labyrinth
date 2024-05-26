@@ -30,7 +30,7 @@ static usize lbrSetFind(LbrSet* p_set, void* p_key) {
   return idx;
 }
 
-void lbrCreateSet(LbrSetCreateInfo* p_info, LbrSet* p_set) {
+void lbrDefineSet(LbrSetCreateInfo* p_info, LbrSet* p_set) {
   usize capacity = p_info->capacity;
   usize key_size = p_info->key_size;
 

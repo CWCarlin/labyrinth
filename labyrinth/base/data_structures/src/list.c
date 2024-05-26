@@ -5,7 +5,7 @@
 #include "allocators/alloc_types.h"
 #include "utils/logging.h"
 
-void lbrCreateList(LbrListCreateInfo* p_info, LbrList* p_list) {
+void lbrDefineList(LbrListCreateInfo* p_info, LbrList* p_list) {
   usize capacity  = p_info->capacity;
   usize type_size = p_info->type_size;
 

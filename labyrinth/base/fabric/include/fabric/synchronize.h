@@ -10,13 +10,13 @@ typedef struct lbr_semaphore_t {
   volatile u8 count;
 } LbrSemaphore;
 
-void lbrCreateSpinLock(LbrSpinLock* p_lock);
+void lbrDefineSpinLock(LbrSpinLock* p_lock);
 lbr_bool lbrSpinLockIsFree(volatile LbrSpinLock* p_lock);
 lbr_bool lbrSpinLockTryAcquire(volatile LbrSpinLock* p_lock);
 void lbrSpinLockAcquire(volatile LbrSpinLock* p_lock);
 void lbrSpinLockRelease(volatile LbrSpinLock* p_lock);
 
-void lbrCreateSemaphore(u8 count, LbrSemaphore* p_semaphore);
+void lbrDefineSemaphore(u8 count, LbrSemaphore* p_semaphore);
 void lbrSemaphoreIncrement(volatile LbrSemaphore* p_semaphore);
 void lbrSemaphoreDecrement(volatile LbrSemaphore* p_semaphore);
 u8 lbrSemaphoreGetCount(volatile LbrSemaphore* p_semaphore);

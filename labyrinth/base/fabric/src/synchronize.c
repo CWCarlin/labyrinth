@@ -2,7 +2,7 @@
 
 #include "utils/types.h"
 
-void lbrCreateSpinLock(LbrSpinLock* p_lock) { lbrSpinLockRelease(p_lock); }
+void lbrDefineSpinLock(LbrSpinLock* p_lock) { lbrSpinLockRelease(p_lock); }
 
 lbr_bool lbrSpinLockIsFree(volatile LbrSpinLock* p_lock) { return !__atomic_load_n(&p_lock->acquired, __ATOMIC_RELAXED); }
 
@@ -24,7 +24,7 @@ void lbrSpinLockAcquire(volatile LbrSpinLock* p_lock) {
 
 void lbrSpinLockRelease(volatile LbrSpinLock* p_lock) { __atomic_store_n(&p_lock->acquired, LBR_FALSE, __ATOMIC_RELEASE); }
 
-void lbrCreateSemaphore(u8 count, LbrSemaphore* p_semaphore) { __atomic_store_n(&p_semaphore->count, count, __ATOMIC_RELEASE); }
+void lbrDefineSemaphore(u8 count, LbrSemaphore* p_semaphore) { __atomic_store_n(&p_semaphore->count, count, __ATOMIC_RELEASE); }
 void lbrSemaphoreIncrement(volatile LbrSemaphore* p_semaphore) { __atomic_add_fetch(&p_semaphore->count, 1, __ATOMIC_ACQ_REL); }
 void lbrSemaphoreDecrement(volatile LbrSemaphore* p_semaphore) { __atomic_sub_fetch(&p_semaphore->count, 1, __ATOMIC_ACQ_REL); }
 u8 lbrSemaphoreGetCount(volatile LbrSemaphore* p_semaphore) { return __atomic_load_n(&p_semaphore->count, __ATOMIC_RELAXED); }

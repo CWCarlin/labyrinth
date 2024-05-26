@@ -13,3 +13,5 @@ add_executable(Labyrinth main.c)
 find_package(Vulkan REQUIRED)
 
 add_subdirectory(labyrinth)
+
+target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan)

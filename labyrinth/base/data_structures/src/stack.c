@@ -5,7 +5,7 @@
 #include "allocators/alloc_types.h"
 #include "utils/logging.h"
 
-void lbrCreateStack(LbrStackCreateInfo* p_info, LbrStack* p_stack) {
+void lbrDefineStack(LbrStackCreateInfo* p_info, LbrStack* p_stack) {
   usize capacity  = p_info->capacity;
   usize type_size = p_info->type_size;
 

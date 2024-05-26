@@ -12,6 +12,9 @@ typedef struct lbr_task_t {
 
 void lbrInitializeFabric();
 void lbrDismantleFabric();
+LbrTask lbrFabricDefineTask(PFN_lbrTaskFunction pfn_func, void* arg);
 void lbrFabricQueueTasks(LbrTask* p_tasks, usize num_tasks, LbrSemaphore** pp_semaphore);
-void lbrFabricWaitForSemaphore(LbrSemaphore* p_semaphore, u8 count);
+void lbrFabricAwaitSemaphore(LbrSemaphore* p_semaphore, u8 count);
 void lbrFabricFreeSemaphore(LbrSemaphore** pp_semaphore);
+
+#define LBR_TASK(fn, arg) lbrFabricDefineTask((PFN_lbrTaskFunction)(fn), arg)

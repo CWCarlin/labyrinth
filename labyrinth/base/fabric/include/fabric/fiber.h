@@ -62,8 +62,9 @@ typedef struct lbr_fiber_t {
   LbrAllocCallbacks alloc_callbacks;
 } LbrFiber;
 
-void lbrCreateFiber(LbrFiberCreateInfo* p_info, LbrFiber* p_fiber);
+void lbrDefineFiber(LbrFiberCreateInfo* p_info, LbrFiber* p_fiber);
 void lbrDestroyFiber(LbrFiber* p_fiber);
+void lbrFiberPrepare(LbrFiber* p_fiber, uintptr pfn_func, uintptr arg);
 void lbrFiberConvertThread(LbrFiber* p_fiber);
 void lbrFiberGetContext(volatile LbrFiber* p_fiber);
 void lbrFiberSetContext(volatile LbrFiber* p_fiber);
