@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 #include <vulkan/vulkan_core.h>
 
 #include "utils/types.h"
@@ -13,8 +14,7 @@ typedef struct lbr_window_t LbrWindow;
 struct lbr_window_t {
   HWND window_handle;
   MSG message;
-  u32 height;
-  u32 width;
+  VkExtent2D resolution;
 };
 
 #else
@@ -23,8 +23,8 @@ struct lbr_window_t {
 typedef struct lbr_window_create_info_t {
   u32 height;
   u32 width;
-  lbr_bool resizeable;
-  lbr_bool show_console;
+  bool resizeable;
+  bool show_console;
   const char* name;
 } LbrWindowCreateInfo;
 

@@ -2,18 +2,16 @@
 
 #ifdef LOGGING
 #include <stdio.h>
+#include <vulkan/vk_enum_string_helper.h>
 
 #define ANSI_GREEN  "\x1b[38;5;28m"
 #define ANSI_YELLOW "\x1b[38;5;227m"
 #define ANSI_RED    "\x1b[38;5;196m"
 #define ANSI_RESET  "\x1b[0m"
 
-void VulkanLog(const char* color, const char* type, const char* severity, const char* message) {
-  printf("%sVulkan %s %s: %s\n" ANSI_RESET, color, type, severity, message);
-}
+void VulkanLog(const char* color, const char* type, const char* severity, const char* message) { printf("%sVulkan %s %s: %s\n" ANSI_RESET, color, type, severity, message); }
 
-VKAPI_ATTR VkBool32 lbrLogVulkanValidation(VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-                                           VkDebugUtilsMessageTypeFlagBitsEXT type,
+VKAPI_ATTR VkBool32 lbrLogVulkanValidation(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagBitsEXT type,
                                            const VkDebugUtilsMessengerCallbackDataEXT* callback_data, void* data) {
   (void)data;
   char* message_type;
@@ -49,23 +47,21 @@ VKAPI_ATTR VkBool32 lbrLogVulkanValidation(VkDebugUtilsMessageSeverityFlagBitsEX
       break;
   }
 
+  lbrDebugBreak();
+
   return VK_FALSE;
 }
 
-void lbrLogAssertionFail(const char* expr, const char* file, u32 line) {
-  printf(ANSI_RED "Assertion Failure %s @ line %d: %s\n" ANSI_RESET, file, line, expr);
-}
+void lbrLogAssertionFail(const char* expr, const char* file, u32 line) { printf(ANSI_RED "Assertion Failure %s @ line %d: %s\n" ANSI_RESET, file, line, expr); }
 
-void lbrLogInfo(const char* message, const char* file, u32 line) {
-  printf(ANSI_GREEN "Info: %s @ line %d: %s\n" ANSI_RESET, file, line, message);
-}
+void lbrLogInfo(const char* message, const char* file, u32 line) { printf(ANSI_GREEN "Info: %s @ line %d: %s\n" ANSI_RESET, file, line, message); }
 
-void lbrLogWarning(const char* message, const char* file, u32 line) {
-  printf(ANSI_YELLOW "Warning: %s @ line %d: %s\n" ANSI_RESET, file, line, message);
-}
+void lbrLogWarning(const char* message, const char* file, u32 line) { printf(ANSI_YELLOW "Warning: %s @ line %d: %s\n" ANSI_RESET, file, line, message); }
 
-void lbrLogError(const char* message, const char* file, u32 line) {
-  printf(ANSI_RED "Error: %s @ line %d: %s\n" ANSI_RESET, file, line, message);
+void lbrLogError(const char* message, const char* file, u32 line) { printf(ANSI_RED "Error: %s @ line %d: %s\n" ANSI_RESET, file, line, message); }
+
+void lbrLogVulkanFailure(const char* expr, VkResult result, const char* file, u32 line) {
+  printf(ANSI_RED "ERROR: %s @ line %d: %s | Vulkan Failure: " ANSI_RESET, file, line, expr, string_VkResult(result));
 }
 
 #endif

@@ -39,16 +39,19 @@ void lbrDefineWindow(LbrWindowCreateInfo* p_info, LbrWindow* p_window) {
     style = style & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX;
   }
 
-  p_window->window_handle = CreateWindowEx(0, "LabyrinthWindowClass", p_info->name, style, CW_USEDEFAULT, CW_USEDEFAULT,
-                                           (int)p_info->width, (int)p_info->height, NULL, NULL, GetModuleHandleA(NULL), NULL);
+  p_window->window_handle = CreateWindowEx(0, "LabyrinthWindowClass", p_info->name, style, CW_USEDEFAULT, CW_USEDEFAULT, (int)p_info->width, (int)p_info->height, NULL, NULL,
+                                           GetModuleHandleA(NULL), NULL);
 
   LBR_ASSERT((p_window->window_handle));
 
   ShowWindow(p_window->window_handle, SW_SHOW);
   UpdateWindow(p_window->window_handle);
 
-  p_window->height = p_info->height;
-  p_window->width  = p_info->width;
+  RECT rect;
+  GetClientRect(p_window->window_handle, &rect);
+
+  p_window->resolution.height = rect.bottom;
+  p_window->resolution.width  = rect.right;
 
   if (p_info->show_console) {
     AllocConsole();
@@ -62,9 +65,10 @@ void lbrDefineWindow(LbrWindowCreateInfo* p_info, LbrWindow* p_window) {
 const char* lbrWindowGetVulkanExtensions() { return VK_KHR_WIN32_SURFACE_EXTENSION_NAME; }
 
 void lbrWindowPollEvents(LbrWindow* p_window) {
-  GetMessage(&p_window->message, NULL, 0, 0);
-  TranslateMessage(&p_window->message);
-  DispatchMessage(&p_window->message);
+  while (PeekMessage(&p_window->message, NULL, 0, 0, PM_REMOVE)) {
+    TranslateMessage(&p_window->message);
+    DispatchMessage(&p_window->message);
+  };
 }
 
 void lbrWindowDefineVulkanSurface(LbrWindow* p_window, VkInstance instance, VkSurfaceKHR* p_surface) {

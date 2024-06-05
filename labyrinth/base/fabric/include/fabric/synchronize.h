@@ -1,9 +1,11 @@
 #pragma once
 
+#include <stdbool.h>
+
 #include "utils/types.h"
 
 typedef struct lbr_spin_lock_t {
-  volatile lbr_bool acquired;
+  volatile bool acquired;
 } LbrSpinLock;
 
 typedef struct lbr_semaphore_t {
@@ -11,8 +13,8 @@ typedef struct lbr_semaphore_t {
 } LbrSemaphore;
 
 void lbrDefineSpinLock(LbrSpinLock* p_lock);
-lbr_bool lbrSpinLockIsFree(volatile LbrSpinLock* p_lock);
-lbr_bool lbrSpinLockTryAcquire(volatile LbrSpinLock* p_lock);
+bool lbrSpinLockIsFree(volatile LbrSpinLock* p_lock);
+bool lbrSpinLockTryAcquire(volatile LbrSpinLock* p_lock);
 void lbrSpinLockAcquire(volatile LbrSpinLock* p_lock);
 void lbrSpinLockRelease(volatile LbrSpinLock* p_lock);
 
